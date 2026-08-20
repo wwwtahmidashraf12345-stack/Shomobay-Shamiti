@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>স্বপ্ন সঞ্চয় সমবায় সমিতি</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#16332B;
+    --green-2:#1F4738;
+    --paper:#F1E9D2;
+    --card:#FBF6E9;
+    --ink:#241C13;
+    --ink-soft:#5B5140;
+    --brass:#C9A24B;
+    --brass-dim:#a9863b;
+    --red:#8B2E2E;
+    --steel:#4B6478;
+    --line:#d8ccaa;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Hind Siliguri',sans-serif;}
+  .disp{font-family:'Tiro Bangla',serif;}
+  a{text-decoration:none;color:inherit;}
+  button{font-family:inherit;cursor:pointer;}
+  ::selection{background:var(--brass);color:var(--green);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:
+      radial-gradient(circle at 15% -10%, rgba(201,162,75,.12), transparent 55%),
+      linear-gradient(180deg, var(--green) 0%, var(--green-2) 100%);
+    color:#F1E9D2;
+    padding:26px 18px 20px;
+    position:relative;
+    border-bottom:3px solid var(--brass);
+  }
+  .hero-inner{max-width:760px;margin:0 auto;text-align:center;}
+  .hero-photo{width:64px;height:64px;border-radius:50%;object-fit:cover;margin:0 auto 10px;display:block;border:3px solid var(--brass);}
+  .org-name{font-family:'Tiro Bangla',serif;font-size:26px;letter-spacing:.5px;margin:0 0 4px;color:#F6EFD8;}
+  .org-tag{font-size:13.5px;color:#cdbfa0;margin:0;}
+  .balance-card{background:rgba(0,0,0,.2);border:1.5px solid var(--brass);border-radius:14px;
+    padding:12px 26px;display:inline-block;margin:14px auto 0;}
+  .balance-card .lbl{font-size:11px;color:#cdbfa0;letter-spacing:.5px;}
+  .balance-card .amt{font-family:'Tiro Bangla',serif;font-size:28px;color:var(--brass);margin-top:2px;}
+  .rule{width:64px;height:2px;background:var(--brass);margin:14px auto 0;opacity:.8;}
+
+  /* ---------- NAV ---------- */
+  nav{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);
+    display:flex;align-items:stretch;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+  .nav-links{display:flex;flex:1;overflow-x:auto;gap:2px;justify-content:center;}
+  nav button{background:none;border:none;padding:12px 14px;font-size:13.5px;color:var(--ink-soft);
+    border-bottom:3px solid transparent;white-space:nowrap;font-weight:600;flex-shrink:0;}
+  nav button.active{color:var(--green);border-bottom-color:var(--red);}
+  .lock-btn{flex-shrink:0;width:42px;display:flex;align-items:center;justify-content:center;
+    background:none;border:none;border-left:1px solid var(--line);}
+  .lock-btn svg{width:18px;height:18px;}
+
+  main{max-width:760px;margin:0 auto;padding:20px 16px 60px;
+    background-image:repeating-linear-gradient(180deg, transparent, transparent 34px, rgba(91,81,64,.06) 35px);
+  }
+
+  .warn-banner{background:#fdecc8;color:#6b4a06;border-bottom:2px solid var(--brass);
+    padding:10px 16px;font-size:12.5px;text-align:center;line-height:1.5;}
+  .view-only-note{background:rgba(75,100,120,.1);color:var(--steel);border:1px dashed var(--steel);
+    border-radius:8px;padding:9px 12px;font-size:12px;text-align:center;margin-bottom:14px;}
+
+  /* ---------- CARDS / GRID ---------- */
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px;}
+  .opt-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 14px;
+    text-align:center;position:relative;transition:transform .15s ease, box-shadow .15s ease;}
+  .opt-card:active{transform:scale(.97);}
+  .opt-card:hover{box-shadow:0 6px 16px rgba(22,51,43,.12);border-color:var(--brass);}
+  .opt-card .icn{width:34px;height:34px;margin:0 auto 10px;color:var(--green);}
+  .opt-card .lbl{font-weight:700;font-size:15.5px;color:var(--ink);}
+  .opt-card .sub{font-size:12px;color:var(--ink-soft);margin-top:3px;}
+
+  .stat-row{display:flex;gap:10px;margin:18px 0 4px;}
+  .stat{flex:1;background:var(--green);color:#F1E9D2;border-radius:10px;padding:12px 8px;text-align:center;}
+  .stat b{font-family:'Tiro Bangla',serif;font-size:17px;display:block;color:var(--brass);}
+  .stat span{font-size:10.5px;color:#cdbfa0;}
+
+  h2.section-title{font-family:'Tiro Bangla',serif;font-size:20px;color:var(--green);
+    border-bottom:2px solid var(--brass);display:inline-block;padding-bottom:4px;margin:4px 0 16px;}
+
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;}
+  .search{flex:1;min-width:140px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;
+    background:var(--card);font-family:inherit;font-size:14px;}
+  .btn{background:var(--green);color:#F1E9D2;border:none;border-radius:8px;padding:10px 14px;font-size:13.5px;
+    font-weight:600;display:inline-flex;align-items:center;gap:6px;}
+  .btn.brass{background:var(--brass);color:var(--green);}
+  .btn.ghost{background:none;border:1px solid var(--line);color:var(--ink-soft);}
+  .btn.danger{background:none;color:var(--red);border:1px solid var(--red);}
+  .btn.sm{padding:6px 10px;font-size:12px;}
+  .btn.block{width:100%;justify-content:center;}
+
+  /* ---------- LISTS ---------- */
+  .list-item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);
+    border-radius:10px;padding:12px 14px;margin-bottom:8px;}
+  .list-item .avatar{width:38px;height:38px;border-radius:50%;background:var(--green);color:var(--brass);
+    display:flex;align-items:center;justify-content:center;font-family:'Tiro Bangla',serif;font-size:15px;flex-shrink:0;}
+  .list-item .meta{flex:1;min-width:0;}
+  .list-item .name{font-weight:700;font-size:15px;}
+  .list-item .name.placeholder{color:var(--ink-soft);font-style:italic;font-weight:600;}
+  .list-item .sub{font-size:12px;color:var(--ink-soft);}
+  .list-item .arrow{color:var(--brass-dim);font-size:18px;}
+  .empty{text-align:center;color:var(--ink-soft);padding:34px 10px;font-size:14px;}
+  .empty .icn{width:40px;height:40px;margin:0 auto 10px;color:var(--brass-dim);opacity:.7;}
+
+  /* ---------- MEMBER HEADER ---------- */
+  .m-head{background:var(--green);color:#F1E9D2;border-radius:12px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden;}
+  .m-head::after{content:"";position:absolute;inset:0;border:1px solid rgba(201,162,75,.3);border-radius:12px;pointer-events:none;margin:5px;}
+  .m-head .name{font-family:'Tiro Bangla',serif;font-size:23px;color:#F6EFD8;}
+  .tag-pill{display:inline-block;font-size:10.5px;background:rgba(201,162,75,.18);color:var(--brass);
+    padding:2px 10px;border-radius:20px;margin-top:8px;font-weight:700;letter-spacing:.3px;}
+  .m-head .row{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:12.5px;color:#cdbfa0;}
+  .m-head .total{margin-top:14px;font-size:13px;color:#cdbfa0;}
+  .m-head .total b{display:block;font-family:'Tiro Bangla',serif;font-size:26px;color:var(--brass);}
+
+  /* ---------- YEAR TABS + MONTH ROWS ---------- */
+  .year-tabs{display:flex;gap:6px;margin:4px 0 12px;overflow-x:auto;}
+  .ytab{flex:0 0 auto;padding:8px 16px;border-radius:20px;border:1.5px solid var(--line);background:var(--card);
+    font-weight:700;font-size:13.5px;color:var(--ink-soft);}
+  .ytab.active{border-color:var(--yc,var(--green));color:var(--yc,var(--green));box-shadow:inset 0 0 0 1px var(--yc,var(--green));}
+  .months-list{display:flex;flex-direction:column;gap:6px;}
+  .month-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);
+    border-left:4px solid var(--line);border-radius:6px;padding:10px 12px;font-size:13px;}
+  .month-row.filled{border-left-color:var(--yc,var(--brass));}
+  .month-row .mn{width:74px;flex-shrink:0;font-weight:700;color:var(--ink);font-size:13px;}
+  .month-row .mid-info{flex:1;min-width:0;}
+  .month-row .mdate{color:var(--ink-soft);font-size:11.5px;}
+  .month-row .mbook{color:var(--ink-soft);font-size:11px;margin-top:1px;}
+  .month-row .mamt{font-family:'Tiro Bangla',serif;color:var(--green);font-weight:700;font-size:14.5px;flex-shrink:0;}
+  .month-row .mempty{flex:1;color:var(--ink-soft);font-size:12.5px;font-style:italic;opacity:.7;}
+  .month-row .mplus{color:var(--brass-dim);font-size:16px;flex-shrink:0;opacity:.6;}
+  .month-row.onetime .mn{font-style:italic;}
+  .month-row.onetime{border-left-style:dashed;}
+
+  /* ---------- MEMBER INFO GRID ---------- */
+  .info-box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:4px 16px;margin-bottom:16px;}
+  .info-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13.5px;}
+  .info-row:last-child{border-bottom:none;}
+  .info-row .k{color:var(--ink-soft);}
+  .info-row .v{font-weight:700;color:var(--ink);font-family:'Tiro Bangla',serif;font-size:15px;}
+  .info-row.due .v{color:var(--red);}
+  .info-row.paid .v{color:var(--green);}
+  .rate-hint{font-size:11.5px;color:var(--ink-soft);font-style:italic;margin:-8px 0 16px;text-align:center;}
+
+  /* ---------- INCOME / EXPENSE ---------- */
+  .entry-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);
+    border-left:4px solid var(--green);border-radius:6px;padding:10px 12px;margin-bottom:7px;font-size:13px;}
+  .entry-row.expense{border-left-color:var(--red);}
+  .entry-row .edate{width:76px;flex-shrink:0;color:var(--ink-soft);font-size:11px;}
+  .entry-row .edesc{flex:1;font-weight:600;min-width:0;}
+  .entry-row .eamt{font-family:'Tiro Bangla',serif;font-weight:700;flex-shrink:0;font-size:14px;}
+  .entry-row.income .eamt{color:var(--green);}
+  .entry-row.expense .eamt{color:var(--red);}
+  .entry-row .edel{background:none;border:none;color:var(--ink-soft);font-size:15px;flex-shrink:0;padding:2px 4px;}
+
+  /* ---------- MODAL ---------- */
+  .modal-bg{position:fixed;inset:0;background:rgba(22,51,43,.55);display:flex;align-items:flex-end;justify-content:center;z-index:100;}
+  @media(min-width:600px){.modal-bg{align-items:center;}}
+  .modal{background:var(--paper);width:100%;max-width:440px;border-radius:16px 16px 0 0;padding:22px 20px 26px;
+    max-height:88vh;overflow-y:auto;border-top:3px solid var(--brass);position:relative;}
+  @media(min-width:600px){.modal{border-radius:14px;}}
+  .modal h3{font-family:'Tiro Bangla',serif;color:var(--green);margin:0 0 16px;font-size:19px;padding-right:20px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:5px;}
+  .field input, .field select, .field textarea{width:100%;padding:10px 11px;border:1px solid var(--line);
+    border-radius:8px;font-family:inherit;font-size:14.5px;background:#fff;}
+  .field textarea{resize:vertical;min-height:90px;}
+  .field .hint{font-size:11px;color:var(--ink-soft);margin-top:4px;}
+  .radio-row{display:flex;gap:10px;}
+  .radio-opt{flex:1;border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;font-size:13px;font-weight:600;color:var(--ink-soft);}
+  .radio-opt.sel{border-color:var(--green);background:rgba(31,71,56,.08);color:var(--green);}
+  .modal-actions{display:flex;gap:10px;margin-top:18px;}
+  .modal-actions .btn{flex:1;justify-content:center;}
+  .close-x{position:absolute;top:14px;right:16px;background:none;border:none;font-size:20px;color:var(--ink-soft);}
+
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--green);color:#F1E9D2;
+    padding:10px 18px;border-radius:30px;font-size:13.5px;z-index:200;box-shadow:0 6px 20px rgba(0,0,0,.25);max-width:88vw;text-align:center;}
+  .toast.err{background:var(--red);}
+
+  .loading{text-align:center;padding:60px 20px;color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+/* ================= API HELPERS ================= */
+const API_BASE = '/api';
+let authToken = localStorage.getItem('samity_admin_token') || null;
+let unlocked = false;
+let backendDown = false;
+
+async function apiCall(method, path, body){
+  try{
+    const headers = {'Content-Type':'application/json'};
+    if(authToken) headers['Authorization'] = 'Bearer '+authToken;
+    const res = await fetch(API_BASE+path, { method, headers, body: body!==undefined?JSON.stringify(body):undefined });
+    let data = null;
+    try{ data = await res.json(); }catch(e){ data = null; }
+    if(!res.ok) return { ok:false, error:(data&&data.error)||('ত্রুটি (কোড '+res.status+')') };
+    return { ok:true, data };
+  }catch(e){
+    return { ok:false, error:'সার্ভারের সাথে সংযোগ করা যাচ্ছে না' };
+  }
+}
+async function apiGet(path){ const r = await apiCall('GET', path); return r.ok ? r.data : null; }
+async function apiMutate(method, path, body){
+  const r = await apiCall(method, path, body);
+  if(!r.ok){ toast('⚠️ '+r.error, true); return null; }
+  return r.data;
+}
+function withId(x){ return x ? {...x, id:x._id} : x; }
+
+let DATA = { org:null, guardians:[], members:[], income:[], expense:[], specialLevies:[], summary:{savingsTotal:0,balance:0}, setupDone:false };
+const monthsCache = {};
+const memberYearState = {};
+
+async function loadAll(){
+  const [org, guardians, members, income, expense, levies, summary, status] = await Promise.all([
+    apiGet('/org'), apiGet('/guardians'), apiGet('/members'),
+    apiGet('/ledger/income'), apiGet('/ledger/expense'), apiGet('/levies'),
+    apiGet('/summary'), apiGet('/auth/status'),
+  ]);
+  if(org===null){ backendDown = true; }
+  DATA.org = org || { name:'স্বপ্ন সঞ্চয় সমবায় সমিতি', tagline:'', ratePerShare:0, onetimeRatePerShare:2000 };
+  DATA.guardians = (guardians||[]).map(withId);
+  DATA.members = (members||[]).map(withId);
+  DATA.income = (income||[]).map(withId);
+  DATA.expense = (expense||[]).map(withId);
+  DATA.specialLevies = (levies||[]).map(withId);
+  DATA.summary = summary || {savingsTotal:0,balance:0,totalIncome:0,totalExpense:0};
+  DATA.setupDone = !!(status && status.setupDone);
+}
+async function refreshSummary(){
+  const summary = await apiGet('/summary');
+  if(summary) DATA.summary = summary;
+}
+async function loadMonths(memberId){
+  if(monthsCache[memberId]) return monthsCache[memberId];
+  const m = await apiGet('/members/'+memberId+'/entries');
+  monthsCache[memberId] = m || {};
+  return monthsCache[memberId];
+}
+
+/* ================= UTIL ================= */
+const bnD=['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+const BN_MONTHS=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+const YEAR_COLOR={2024:'#C9A24B',2025:'#1F4738',2026:'#8B2E2E',2027:'#4B6478',2028:'#6B7A3A',2029:'#6B3F5C',2030:'#2E6B66'};
+function toBn(n){ return String(n).replace(/[0-9]/g, d=>bnD[d]); }
+function taka(n){ n=Number(n)||0; return '৳'+toBn(n.toLocaleString('en-IN')); }
+function bnDate(iso){
+  if(!iso) return '';
+  const [y,m,d]=iso.split('-');
+  return `${toBn(parseInt(d))} ${BN_MONTHS[parseInt(m)-1]}, ${toBn(y)}`;
+}
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function esc(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function initials(name){ return (name||'?').trim().charAt(0) || '?'; }
+function toast(msg, isErr){
+  const t=document.createElement('div'); t.className='toast'+(isErr?' err':''); t.textContent=msg;
+  document.body.appendChild(t); setTimeout(()=>t.remove(),isErr?3600:2200);
+}
+function sumArr(a){ return (a||[]).reduce((s,e)=>s+Number(e.amount||0),0); }
+function calcBalance(){ return (DATA.summary.savingsTotal||0) + sumArr(DATA.income) - sumArr(DATA.expense); }
+function requireUnlocked(){
+  if(!unlocked){ toast('এডিট মোড চালু নেই — উপরে ডান পাশের লক আইকনে চাপুন', true); return false; }
+  return true;
+}
+
+function monthsInRange(){
+  const arr=[];
+  [10,11,12].forEach(m=>{
+    const mm=String(m).padStart(2,'0');
+    arr.push({y:2024,key:`2024-${mm}`,label:BN_MONTHS[m-1],defaultDate:`2024-${mm}-01`});
+  });
+  for(let y=2025;y<=2030;y++){
+    for(let m=1;m<=12;m++){
+      const mm=String(m).padStart(2,'0');
+      arr.push({y,key:`${y}-${mm}`,label:BN_MONTHS[m-1],defaultDate:`${y}-${mm}-01`});
+      if(m===7) arr.push({y,key:`${y}-OT1`,label:'এককালীন',defaultDate:`${y}-07-01`,onetime:true});
+      if(m===12) arr.push({y,key:`${y}-OT2`,label:'এককালীন',defaultDate:`${y}-12-01`,onetime:true});
+    }
+  }
+  return arr;
+}
+function elapsedRegularMonths(){
+  const now = new Date();
+  let y=now.getFullYear(), m=now.getMonth()+1;
+  if(y>2030 || (y===2030 && m>12)){ y=2030; m=12; }
+  if(y<2024 || (y===2024 && m<10)) return 0;
+  return (y-2024)*12 + (m-10) + 1;
+}
+function elapsedOnetimeCount(){
+  const now = new Date();
+  let y=now.getFullYear(), m=now.getMonth()+1;
+  if(y>2030){ y=2030; m=12; }
+  let count=0;
+  for(let yr=2025; yr<=2030; yr++){
+    if(y>yr || (y===yr && m>=7)) count++;
+    if(y>yr || (y===yr && m>=12)) count++;
+  }
+  return count;
+}
+function memberFinance(member, months){
+  const actual = Object.values(months).reduce((s,e)=>s+Number(e.amount||0),0);
+  const rate = Number(DATA.org.ratePerShare||0);
+  const otRate = Number(DATA.org.onetimeRatePerShare||0);
+  const shares = Number(member.shares||0);
+  const regularExpected = rate * shares * elapsedRegularMonths();
+  const julDecExpected = otRate * shares * elapsedOnetimeCount();
+  const levyExpected = shares * sumArr(DATA.specialLevies);
+  const expected = regularExpected + julDecExpected + levyExpected;
+  const due = Math.max(0, expected - actual);
+  return {actual, expected, due};
+}
+
+/* ================= ICONS ================= */
+const ICN = {
+  home:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>`,
+  shield:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/></svg>`,
+  people:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><circle cx="17" cy="9" r="2.3"/><path d="M16 14.2c2.7.4 4.5 2.4 5 5.8"/></svg>`,
+  book:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5A2.5 2.5 0 0 1 17.5 21H6.5A2.5 2.5 0 0 1 4 18.5v-13z"/><path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20"/></svg>`,
+  plus:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>`,
+  chest:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="9" width="18" height="11" rx="1.5"/><path d="M3 13h18"/><path d="M9 9V7a3 3 0 0 1 6 0v2"/><circle cx="12" cy="15.5" r="1.4"/></svg>`,
+  scale:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v18M7 21h10M5 7h14M5 7l-3 6a3 3 0 0 0 6 0L5 7zM19 7l-3 6a3 3 0 0 0 6 0l-3-6z"/></svg>`,
+  lock:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`,
+  unlock:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 7.6-1.8"/></svg>`,
+};
+
+/* ================= ROUTER ================= */
+function nav(hash){ location.hash = hash; }
+window.addEventListener('hashchange', render);
+
+function route(){
+  const h = location.hash.replace('#','') || 'home';
+  const [page, id] = h.split('/');
+  return {page, id};
+}
+
+async function render(){
+  const root = document.getElementById('root');
+  const {page, id} = route();
+
+  let navHtml = `
+  <nav>
+    <div class="nav-links">
+      <button data-nav="home" class="${page==='home'?'active':''}">হোম</button>
+      <button data-nav="guardians" class="${page==='guardians'||page==='guardian'?'active':''}">জিম্মাদারগণ</button>
+      <button data-nav="members" class="${page==='members'||page==='member'?'active':''}">সকল সদস্য</button>
+      <button data-nav="income-expense" class="${page==='income-expense'?'active':''}">আয়-ব্যয়</button>
+      <button data-nav="about" class="${page==='about'?'active':''}">তথ্য</button>
+    </div>
+    <button id="lockToggle" class="lock-btn" style="color:${unlocked?'var(--red)':'var(--ink-soft)'}" title="${unlocked?'এডিট মোড চালু আছে — লক করতে চাপুন':'শুধু দেখা যাচ্ছে — এডিট করতে চাপুন'}">${unlocked?ICN.unlock:ICN.lock}</button>
+  </nav>`;
+
+  const banner = backendDown ? `<div class="warn-banner">⚠️ সার্ভারের সাথে সংযোগ করা যাচ্ছে না। ব্যাকএন্ড (Node.js) চালু আছে কিনা এবং MongoDB সংযোগ ঠিক আছে কিনা যাচাই করুন।</div>` : '';
+
+  root.innerHTML = heroHtml() + navHtml + banner + `<main><div class="loading">লোড হচ্ছে...</div></main>`;
+  attachNav();
+
+  let body;
+  if(page==='home') body = viewHome();
+  else if(page==='guardians') body = viewGuardians();
+  else if(page==='guardian') body = await viewGuardianDetail(id);
+  else if(page==='members') body = viewMembers();
+  else if(page==='member') body = await viewMemberDetail(id);
+  else if(page==='income-expense') body = viewIncomeExpense();
+  else if(page==='about') body = viewAbout();
+  else body = viewHome();
+
+  document.querySelector('main').innerHTML = (unlocked?'':'<div class="view-only-note">শুধু দেখার মোড — পরিবর্তন করতে উপরে ডান পাশের লক আইকনে চাপুন</div>') + body;
+  attachPageEvents(page, id);
+}
+
+function heroHtml(){
+  const org = DATA.org || {};
+  const balance = calcBalance();
+  const photo = org.heroImageUrl ? `<img class="hero-photo" src="${esc(org.heroImageUrl)}" alt="">` : '';
+  return `
+  <div class="hero"><div class="hero-inner">
+    ${photo}
+    <div class="org-name">${esc(org.name||'স্বপ্ন সঞ্চয় সমবায় সমিতি')}</div>
+    <div class="org-tag">${esc(org.tagline||'')}</div>
+    <div class="balance-card"><div class="lbl">বর্তমান ব্যালেন্স</div><div class="amt">${taka(balance)}</div></div>
+    <div class="rule"></div>
+  </div></div>`;
+}
+
+function attachNav(){
+  document.querySelectorAll('[data-nav]').forEach(b=>{
+    b.onclick = ()=>nav(b.getAttribute('data-nav'));
+  });
+  document.getElementById('lockToggle').onclick = ()=> unlocked ? lockNow() : openAdminAuth();
+}
+
+/* ================= VIEWS ================= */
+function viewHome(){
+  const totalMembers = DATA.members.length;
+  const totalGuardians = DATA.guardians.length;
+  const savings = DATA.summary.savingsTotal || 0;
+  const balance = calcBalance();
+  return `
+  <div class="stat-row">
+    <div class="stat"><b>${toBn(totalGuardians)}</b><span>জিম্মাদার</span></div>
+    <div class="stat"><b>${toBn(totalMembers)}</b><span>সদস্য</span></div>
+    <div class="stat"><b>${taka(savings)}</b><span>সদস্যদের মোট জমা</span></div>
+  </div>
+  <div class="grid" style="margin-top:20px">
+    <a class="opt-card" data-nav="guardians">
+      <div class="icn">${ICN.shield}</div>
+      <div class="lbl">জিম্মাদারগণ</div>
+      <div class="sub">${toBn(totalGuardians)} জন জিম্মাদার</div>
+    </a>
+    <a class="opt-card" data-nav="members">
+      <div class="icn">${ICN.people}</div>
+      <div class="lbl">সকল সদস্য</div>
+      <div class="sub">${toBn(totalMembers)} জন সাধারণ সদস্য</div>
+    </a>
+    <a class="opt-card" data-nav="income-expense">
+      <div class="icn">${ICN.scale}</div>
+      <div class="lbl">আয়-ব্যয়</div>
+      <div class="sub">${taka(balance)} অবশিষ্ট</div>
+    </a>
+    <a class="opt-card" data-nav="about">
+      <div class="icn">${ICN.book}</div>
+      <div class="lbl">সমিতির তথ্য</div>
+      <div class="sub">বিস্তারিত জানুন</div>
+    </a>
+  </div>`;
+}
+
+function guardianMemberCount(gid){
+  return DATA.members.filter(m=>m.guardianId===gid).length;
+}
+
+function viewGuardians(){
+  const items = DATA.guardians.map(g=>`
+    <a class="list-item" data-nav="guardian/${g.id}">
+      <div class="avatar">${esc(initials(g.name))}</div>
+      <div class="meta">
+        <div class="name">${esc(g.name)}</div>
+        <div class="sub">${toBn(guardianMemberCount(g.id))} জন সদস্যের দায়িত্বে${g.phone? ' · '+esc(g.phone):''}</div>
+      </div>
+      <div class="arrow">›</div>
+    </a>`).join('');
+  return `
+  <h2 class="section-title">জিম্মাদারগণ</h2>
+  ${unlocked?`<div class="toolbar">
+    <button class="btn brass" id="addGuardianBtn">${ICN.plus} জিম্মাদার যোগ করুন</button>
+  </div>`:''}
+  ${items || emptyState('shield','এখনো কোনো জিম্মাদার যোগ করা হয়নি')}
+  `;
+}
+
+async function viewGuardianDetail(gid){
+  const g = DATA.guardians.find(x=>x.id===gid);
+  if(!g) return emptyState('shield','জিম্মাদার খুঁজে পাওয়া যায়নি');
+  const members = DATA.members.filter(m=>m.guardianId===gid);
+  const items = members.map(m=>`
+    <a class="list-item" data-nav="member/${m.id}">
+      <div class="avatar">${esc(initials(m.name))}</div>
+      <div class="meta">
+        <div class="name ${m.name?'':'placeholder'}">সদস্য নং ${toBn(m.memberNo)} — ${m.name?esc(m.name):'নাম যোগ করুন'}</div>
+        <div class="sub">${m.phone?esc(m.phone):'হিসাব দেখতে চাপুন'}</div>
+      </div>
+      <div class="arrow">›</div>
+    </a>`).join('');
+  return `
+  <h2 class="section-title">${esc(g.name)}</h2>
+  ${unlocked?`<div class="toolbar">
+    <button class="btn ghost sm" id="editGuardianBtn">নাম/ফোন পরিবর্তন</button>
+    <button class="btn brass sm" id="addMemberBtn" data-gid="${g.id}">${ICN.plus} সদস্য যোগ করুন</button>
+    <button class="btn ghost sm" id="bulkAddBtn" data-gid="${g.id}">একসাথে অনেকজন যোগ করুন</button>
+  </div>`:''}
+  ${items || emptyState('people','এই জিম্মাদারের অধীনে এখনো কোনো সদস্য নেই')}
+  `;
+}
+
+function viewMembers(){
+  const items = DATA.members
+    .slice()
+    .sort((a,b)=>a.memberNo-b.memberNo)
+    .map(m=>{
+      const g = DATA.guardians.find(x=>x.id===m.guardianId);
+      return `
+      <a class="list-item member-row" data-nav="member/${m.id}" data-search="${esc(m.name)} ${toBn(m.memberNo)}">
+        <div class="avatar">${esc(initials(m.name))}</div>
+        <div class="meta">
+          <div class="name ${m.name?'':'placeholder'}">সদস্য নং ${toBn(m.memberNo)} — ${m.name?esc(m.name):'নাম যোগ করুন'}</div>
+          <div class="sub">জিম্মাদার: ${g?esc(g.name):'নির্ধারিত নয়'}</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>`;
+    }).join('');
+  return `
+  <h2 class="section-title">সকল সদস্য</h2>
+  <div class="toolbar">
+    <input class="search" id="memberSearch" placeholder="নাম বা সদস্য নং দিয়ে খুঁজুন...">
+    ${unlocked?`<button class="btn brass sm" id="addMemberBtnTop">${ICN.plus} সদস্য</button>
+    <button class="btn ghost sm" id="bulkAddBtnTop">একসাথে অনেকজন যোগ করুন</button>`:''}
+  </div>
+  <div id="memberList">${items || emptyState('people','এখনো কোনো সদস্য যোগ করা হয়নি')}</div>
+  `;
+}
+
+async function viewMemberDetail(mid){
+  const m = DATA.members.find(x=>x.id===mid);
+  if(!m) return emptyState('people','সদস্য খুঁজে পাওয়া যায়নি');
+  const g = DATA.guardians.find(x=>x.id===m.guardianId);
+  const months = await loadMonths(mid);
+  const fin = memberFinance(m, months);
+  const curYear = new Date().getFullYear();
+  const defYear = Math.min(2030, Math.max(2024, curYear));
+  if(!memberYearState[mid]) memberYearState[mid] = defYear;
+  const activeYear = memberYearState[mid];
+
+  return `
+  <button class="btn ghost sm" data-nav="members" style="margin-bottom:14px">‹ সকল সদস্যে ফিরুন</button>
+  <div class="m-head">
+    <div class="name">সদস্য নং ${toBn(m.memberNo)} — ${m.name?esc(m.name):'নাম যোগ করুন'}</div>
+    <div class="tag-pill">সাধারণ সদস্য</div>
+    <div class="row">
+      <span>জিম্মাদার: ${g?esc(g.name):'নির্ধারিত নয়'}</span>
+      ${m.phone?`<span>ফোন: ${esc(m.phone)}</span>`:''}
+    </div>
+    <div class="total">সর্বমোট জমা<b>${taka(fin.actual)}</b></div>
+  </div>
+  ${unlocked?`<div class="toolbar">
+    <button class="btn ghost sm" id="editMemberBtn" data-mid="${mid}">তথ্য পরিবর্তন</button>
+  </div>`:''}
+  <div class="info-box">
+    <div class="info-row"><div class="k">ঠিকানা</div><div class="v" style="font-family:inherit;font-weight:600;font-size:13.5px;text-align:right;">${m.address?esc(m.address):'—'}</div></div>
+    <div class="info-row"><div class="k">শেয়ার সংখ্যা</div><div class="v">${toBn(m.shares||0)}</div></div>
+    <div class="info-row"><div class="k">মোট জমা হওয়ার কথা</div><div class="v">${taka(fin.expected)}</div></div>
+    <div class="info-row paid"><div class="k">মোট জমা হয়েছে</div><div class="v">${taka(fin.actual)}</div></div>
+    <div class="info-row due"><div class="k">বকেয়া</div><div class="v">${taka(fin.due)}</div></div>
+  </div>
+  ${Number(DATA.org.ratePerShare||0)===0?'<div class="rate-hint">প্রত্যাশিত জমা সঠিকভাবে দেখাতে "তথ্য" পেইজে প্রতি শেয়ারের মাসিক চাঁদার হার বসান</div>':''}
+  ${renderLevyRows(months)}
+  <h2 class="section-title" style="font-size:16px">মাসভিত্তিক জমার হিসাব</h2>
+  <div class="year-tabs" id="yearTabs">
+    ${[2024,2025,2026,2027,2028,2029,2030].map(y=>`<button class="ytab ${activeYear===y?'active':''}" data-year="${y}" style="--yc:${YEAR_COLOR[y]}">${toBn(y)}</button>`).join('')}
+  </div>
+  <div id="monthsWrap">${renderMonthsList(activeYear, months)}</div>
+  `;
+}
+
+function renderLevyRows(months){
+  if(!DATA.specialLevies.length) return '';
+  const rows = DATA.specialLevies.map(lv=>{
+    const key = 'levy:'+lv.id;
+    const e = months[key];
+    if(e){
+      return `
+      <div class="month-row filled" data-edit-month="${key}" data-label="${esc(lv.title)}" data-default="${todayISO()}" style="--yc:var(--brass)">
+        <div class="mn" style="width:auto;max-width:120px;">${esc(lv.title)}</div>
+        <div class="mid-info">
+          <div class="mdate">${bnDate(e.date)}</div>
+          ${e.bookNo?`<div class="mbook">বই/রশিদ নং ${esc(e.bookNo)}</div>`:''}
+        </div>
+        <div class="mamt">${taka(e.amount)}</div>
+      </div>`;
+    }
+    return `
+    <div class="month-row" data-edit-month="${key}" data-label="${esc(lv.title)}" data-default="${todayISO()}">
+      <div class="mn" style="width:auto;max-width:120px;">${esc(lv.title)}</div>
+      <div class="mempty">${unlocked?'বকেয়া — যোগ করতে চাপুন':'বকেয়া'}</div>
+      ${unlocked?`<div class="mplus">${ICN.plus}</div>`:''}
+    </div>`;
+  }).join('');
+  return `<h2 class="section-title" style="font-size:16px">বিশেষ এককালীন চাঁদা</h2><div class="months-list" style="margin-bottom:18px">${rows}</div>`;
+}
+
+function renderMonthsList(year, months){
+  const list = monthsInRange().filter(o=>o.y===year);
+  const rows = list.map(o=>{
+    const e = months[o.key];
+    const otCls = o.onetime ? ' onetime' : '';
+    if(e){
+      return `
+      <div class="month-row filled${otCls}" data-edit-month="${o.key}" data-label="${esc(o.label)}" data-default="${o.defaultDate}" style="--yc:${YEAR_COLOR[year]}">
+        <div class="mn">${o.label}</div>
+        <div class="mid-info">
+          <div class="mdate">${bnDate(e.date)}</div>
+          ${e.bookNo?`<div class="mbook">বই/রশিদ নং ${esc(e.bookNo)}</div>`:''}
+        </div>
+        <div class="mamt">${taka(e.amount)}</div>
+      </div>`;
+    }
+    return `
+    <div class="month-row${otCls}" data-edit-month="${o.key}" data-label="${esc(o.label)}" data-default="${o.defaultDate}" style="--yc:${YEAR_COLOR[year]}">
+      <div class="mn">${o.label}</div>
+      <div class="mempty">${unlocked?'জমা হয়নি — যোগ করতে চাপুন':'জমা হয়নি'}</div>
+      ${unlocked?`<div class="mplus">${ICN.plus}</div>`:''}
+    </div>`;
+  }).join('');
+  return `<div class="months-list">${rows}</div>`;
+}
+
+function viewIncomeExpense(){
+  const savings = DATA.summary.savingsTotal || 0;
+  const totalIncome = sumArr(DATA.income);
+  const totalExpense = sumArr(DATA.expense);
+  const combinedIncome = savings + totalIncome;
+  const balance = combinedIncome - totalExpense;
+  const savingsRow = `<div class="entry-row income" style="border-left-color:var(--brass)">
+    <div class="edate">—</div>
+    <div class="edesc">সদস্যদের সকল চাঁদা/জমা <span style="opacity:.65;font-weight:400;">(স্বয়ংক্রিয়, সব সদস্যের পাতা থেকে)</span></div>
+    <div class="eamt">${taka(savings)}</div>
+  </div>`;
+  const incomeRows = DATA.income.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(e=>entryRow(e,'income')).join('');
+  const expenseRows = DATA.expense.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(e=>entryRow(e,'expense')).join('');
+  return `
+  <h2 class="section-title">আয়-ব্যয়</h2>
+  <div class="stat-row">
+    <div class="stat"><b>${taka(combinedIncome)}</b><span>মোট আয় (জমা+অন্যান্য)</span></div>
+    <div class="stat"><b>${taka(totalExpense)}</b><span>মোট ব্যয়</span></div>
+    <div class="stat"><b>${taka(balance)}</b><span>অবশিষ্ট (ব্যালেন্স)</span></div>
+  </div>
+  ${unlocked?`<div class="toolbar" style="margin-top:18px">
+    <button class="btn brass sm" id="addIncomeBtn">${ICN.plus} অতিরিক্ত আয় যোগ করুন</button>
+    <button class="btn danger sm" id="addExpenseBtn">${ICN.plus} ব্যয় যোগ করুন</button>
+  </div>`:''}
+  <h2 class="section-title" style="font-size:15px">আয়ের তালিকা</h2>
+  ${savingsRow}
+  ${incomeRows}
+  <h2 class="section-title" style="font-size:15px;margin-top:22px">ব্যয়ের তালিকা</h2>
+  ${expenseRows || emptyState('chest','এখনো কোনো ব্যয় যোগ করা হয়নি')}
+  `;
+}
+
+function entryRow(e, type){
+  return `<div class="entry-row ${type}">
+    <div class="edate">${bnDate(e.date)}</div>
+    <div class="edesc">${esc(e.desc || (type==='income'?'আয়':'ব্যয়'))}</div>
+    <div class="eamt">${type==='expense'?'−':''}${taka(e.amount)}</div>
+    ${unlocked?`<button class="edel" data-del-entry="${e.id}" data-etype="${type}">✕</button>`:''}
+  </div>`;
+}
+
+function viewAbout(){
+  const o = DATA.org;
+  if(!unlocked){
+    return `
+    <h2 class="section-title">সমিতির তথ্য</h2>
+    <div class="info-box">
+      <div class="info-row"><div class="k">সমিতির নাম</div><div class="v" style="font-family:inherit;font-weight:600;text-align:right;">${esc(o.name)||'—'}</div></div>
+      <div class="info-row"><div class="k">স্লোগান</div><div class="v" style="font-family:inherit;font-weight:600;text-align:right;">${esc(o.tagline)||'—'}</div></div>
+      <div class="info-row"><div class="k">প্রতিষ্ঠাকাল</div><div class="v" style="font-family:inherit;font-weight:600;">${esc(o.established)||'—'}</div></div>
+      <div class="info-row"><div class="k">ঠিকানা</div><div class="v" style="font-family:inherit;font-weight:600;text-align:right;">${esc(o.address)||'—'}</div></div>
+      <div class="info-row"><div class="k">দায়িত্বশীল</div><div class="v" style="font-family:inherit;font-weight:600;">${esc(o.contact)||'—'}</div></div>
+      <div class="info-row"><div class="k">যোগাযোগ</div><div class="v" style="font-family:inherit;font-weight:600;">${esc(o.contactPhone)||'—'}</div></div>
+    </div>`;
+  }
+  return `
+  <h2 class="section-title">সমিতির তথ্য</h2>
+  <div class="field"><label>সমিতির নাম</label><input id="f_name" value="${esc(o.name)}"></div>
+  <div class="field"><label>ট্যাগলাইন / স্লোগান</label><input id="f_tagline" value="${esc(o.tagline)}"></div>
+  <div class="field"><label>প্রতিষ্ঠাকাল</label><input id="f_established" value="${esc(o.established)}" placeholder="যেমন: ২০১৮"></div>
+  <div class="field"><label>ঠিকানা</label><textarea id="f_address">${esc(o.address)}</textarea></div>
+  <div class="field"><label>দায়িত্বশীল ব্যক্তির নাম</label><input id="f_contact" value="${esc(o.contact)}"></div>
+  <div class="field"><label>যোগাযোগ নম্বর</label><input id="f_phone" value="${esc(o.contactPhone)}"></div>
+  <div class="field"><label>উপরের ছবির লিংক (ঐচ্ছিক)</label><input id="f_hero" value="${esc(o.heroImageUrl)}" placeholder="https://..."></div>
+  <div class="field"><label>প্রতি শেয়ারে মাসিক চাঁদার হার (টাকা)</label><input id="f_rate" type="number" inputmode="numeric" value="${Number(o.ratePerShare||0)}" placeholder="যেমন: ১০০"></div>
+  <div class="field"><label>প্রতি শেয়ারে জুলাই/ডিসেম্বর এককালীন হার (টাকা)</label><input id="f_otrate" type="number" inputmode="numeric" value="${Number(o.onetimeRatePerShare||0)}" placeholder="যেমন: ২০০০"></div>
+  <button class="btn brass block" id="saveAboutBtn">তথ্য সংরক্ষণ করুন</button>
+  <button class="btn ghost block" id="changePwBtn" style="margin-top:10px">এডিট পাসওয়ার্ড পরিবর্তন করুন</button>
+  <h2 class="section-title" style="font-size:16px;margin-top:26px">বিশেষ এককালীন চাঁদা</h2>
+  <div class="field hint" style="margin:-8px 0 12px;">এখানে যোগ করা প্রতিটি চাঁদা "প্রতি শেয়ারে" হারে সব সদস্যের "বকেয়া"-তে (শেয়ার সংখ্যা × এই হার) যোগ হয়ে যাবে।</div>
+  <div class="toolbar"><button class="btn brass sm" id="addLevyBtn">${ICN.plus} নতুন এককালীন চাঁদা যোগ করুন</button></div>
+  ${DATA.specialLevies.length ? DATA.specialLevies.map(levyRowHtml).join('') : emptyState('chest','এখনো কোনো বিশেষ এককালীন চাঁদা যোগ করা হয়নি')}
+  `;
+}
+
+function levyRowHtml(lv){
+  return `<div class="entry-row income">
+    <div class="edate">${bnDate(lv.date)}</div>
+    <div class="edesc">${esc(lv.title)}</div>
+    <div class="eamt">${taka(lv.amount)}</div>
+    <button class="edel" data-del-levy="${lv.id}">✕</button>
+  </div>`;
+}
+
+function emptyState(icon,msg){
+  return `<div class="empty"><div class="icn">${ICN[icon]}</div>${msg}</div>`;
+}
+
+/* ================= MODAL HELPERS ================= */
+function openModal(html){
+  const bg = document.createElement('div');
+  bg.className='modal-bg';
+  bg.innerHTML = `<div class="modal">${html}</div>`;
+  bg.addEventListener('click', e=>{ if(e.target===bg) bg.remove(); });
+  document.body.appendChild(bg);
+  return bg;
+}
+function closeModal(bg){ bg.remove(); }
+
+/* ================= LOCK / ADMIN AUTH ================= */
+function openAdminAuth(){
+  if(!DATA.setupDone){
+    const bg = openModal(`
+      <button class="close-x">✕</button>
+      <h3>এডিট পাসওয়ার্ড সেট করুন</h3>
+      <div class="field">
+        <label>নতুন পাসওয়ার্ড</label>
+        <input id="pw1" type="password">
+        <div class="hint">এই পাসওয়ার্ড শুধু তুমি জানবে — এটা দিয়েই ভবিষ্যতে এডিট মোড চালু করবে।</div>
+      </div>
+      <div class="field"><label>পাসওয়ার্ড আবার লিখুন</label><input id="pw2" type="password"></div>
+      <div class="modal-actions">
+        <button class="btn ghost" id="cancelBtn">বাতিল</button>
+        <button class="btn brass" id="saveBtn">সেট করুন</button>
+      </div>`);
+    bg.querySelector('.close-x').onclick=()=>closeModal(bg);
+    bg.querySelector('#cancelBtn').onclick=()=>closeModal(bg);
+    bg.querySelector('#saveBtn').onclick=async ()=>{
+      const p1=bg.querySelector('#pw1').value, p2=bg.querySelector('#pw2').value;
+      if(!p1||p1.length<4){ toast('কমপক্ষে ৪ অক্ষরের পাসওয়ার্ড দিন', true); return; }
+      if(p1!==p2){ toast('দুটো পাসওয়ার্ড মিলছে না', true); return; }
+      const data = await apiMutate('POST','/auth/setup', {password:p1});
+      if(!data) return;
+      authToken = data.token;
+      localStorage.setItem('samity_admin_token', authToken);
+      DATA.setupDone = true;
+      unlocked = true;
+      closeModal(bg); toast('এডিট মোড চালু হয়েছে'); render();
+    };
+    return;
+  }
+  const bg = openModal(`
+    <button class="close-x">✕</button>
+    <h3>এডিট মোড চালু করুন</h3>
+    <div class="field"><label>পাসওয়ার্ড লিখুন</label><input id="pw" type="password"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelBtn">বাতিল</button>
+      <button class="btn brass" id="saveBtn">প্রবেশ করুন</button>
+    </div>`);
+  bg.querySelector('.close-x').onclick=()=>closeModal(bg);
+  bg.querySelector('#cancelBtn').onclick=()=>closeModal(bg);
+  bg.querySelector('#saveBtn').onclick=async ()=>{
+    const p = bg.querySelector('#pw').value;
+    const data = await apiMutate('POST','/auth/login', {password:p});
+    if(!data) return;
+    authToken = data.token;
+    localStorage.setItem('samity_admin_token', authToken);
+    unlocked = true;
+    closeModal(bg); toast('এডিট মোড চালু হয়েছে'); render();
+  };
+}
+function lockNow(){
+  unlocked = false;
+  authToken = null;
+  localStorage.removeItem('samity_admin_token');
+  toast('শুধু দেখার মোডে ফিরে যাওয়া হয়েছে');
+  render();
+}
+function openChangePassword(){
+  const bg = openModal(`
+    <button class="close-x">✕</button>
+    <h3>পাসওয়ার্ড পরিবর্তন করুন</h3>
+    <div class="field"><label>বর্তমান পাসওয়ার্ড</label><input id="cp0" type="password"></div>
+    <div class="field"><label>নতুন পাসওয়ার্ড</label><input id="cp1" type="password"></div>
+    <div class="field"><label>নতুন পাসওয়ার্ড আবার লিখুন</label><input id="cp2" type="password"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelBtn">বাতিল</button>
+      <button class="btn brass" id="saveBtn">পরিবর্তন করুন</button>
+    </div>`);
+  bg.querySelector('.close-x').onclick=()=>closeModal(bg);
+  bg.querySelector('#cancelBtn').onclick=()=>closeModal(bg);
+  bg.querySelector('#saveBtn').onclick=async ()=>{
+    const cur=bg.querySelector('#cp0').value, n1=bg.querySelector('#cp1').value, n2=bg.querySelector('#cp2').value;
+    if(!n1||n1.length<4){ toast('কমপক্ষে ৪ অক্ষরের পাসওয়ার্ড দিন', true); return; }
+    if(n1!==n2){ toast('নতুন পাসওয়ার্ড দুটো মিলছে না', true); return; }
+    const data = await apiMutate('POST','/auth/change-password', {currentPassword:cur, newPassword:n1});
+    if(!data) return;
+    closeModal(bg); toast('পাসওয়ার্ড পরিবর্তিত হয়েছে');
+  };
+}
+
+/* ================= EVENTS ================= */
+function attachPageEvents(page, id){
+  document.querySelectorAll('[data-nav]').forEach(b=>{
+    if(!b.onclick) b.onclick = ()=>nav(b.getAttribute('data-nav'));
+  });
+
+  if(page==='guardians'){
+    const b = document.getElementById('addGuardianBtn'); if(b) b.onclick = openAddGuardian;
+  }
+  if(page==='guardian'){
+    const gid = id;
+    const b1=document.getElementById('addMemberBtn'); if(b1) b1.onclick = ()=>openAddMember(gid);
+    const b2=document.getElementById('bulkAddBtn'); if(b2) b2.onclick = ()=>openBulkAdd(gid);
+    const b3=document.getElementById('editGuardianBtn'); if(b3) b3.onclick = ()=>openEditGuardian(gid);
+  }
+  if(page==='members'){
+    const b1=document.getElementById('addMemberBtnTop'); if(b1) b1.onclick = ()=>openAddMember(null);
+    const b2=document.getElementById('bulkAddBtnTop'); if(b2) b2.onclick = ()=>openBulkAdd(null);
+    const search = document.getElementById('memberSearch');
+    search.oninput = ()=>{
+      const q = search.value.trim().toLowerCase();
+      document.querySelectorAll('.member-row').forEach(row=>{
+        const hay = row.getAttribute('data-search').toLowerCase();
+        row.style.display = hay.includes(q) ? '' : 'none';
+      });
+    };
+  }
+  if(page==='member'){
+    const mid = id;
+    const eb = document.getElementById('editMemberBtn'); if(eb) eb.onclick = ()=>openEditMember(mid);
+    document.querySelectorAll('.ytab').forEach(t=>{
+      t.onclick = async ()=>{
+        const y = Number(t.getAttribute('data-year'));
+        memberYearState[mid] = y;
+        const months = await loadMonths(mid);
+        document.getElementById('monthsWrap').innerHTML = renderMonthsList(y, months);
+        document.querySelectorAll('.ytab').forEach(x=>x.classList.remove('active'));
+        t.classList.add('active');
+        attachMonthRowEvents(mid);
+      };
+    });
+    attachMonthRowEvents(mid);
+  }
+  if(page==='income-expense'){
+    const bi=document.getElementById('addIncomeBtn'); if(bi) bi.onclick = ()=>openAddEntry('income');
+    const be=document.getElementById('addExpenseBtn'); if(be) be.onclick = ()=>openAddEntry('expense');
+    document.querySelectorAll('[data-del-entry]').forEach(btn=>{
+      btn.onclick = ()=>deleteEntry(btn.getAttribute('data-etype'), btn.getAttribute('data-del-entry'));
+    });
+  }
+  if(page==='about'){
+    const sb=document.getElementById('saveAboutBtn'); if(sb) sb.onclick = saveAbout;
+    const cp=document.getElementById('changePwBtn'); if(cp) cp.onclick = openChangePassword;
+    const alb=document.getElementById('addLevyBtn'); if(alb) alb.onclick = openAddLevy;
+    document.querySelectorAll('[data-del-levy]').forEach(btn=>{
+      btn.onclick = ()=>deleteLevy(btn.getAttribute('data-del-levy'));
+    });
+  }
+}
+
+function attachMonthRowEvents(mid){
+  if(!unlocked) return;
+  document.querySelectorAll('[data-edit-month]').forEach(row=>{
+    row.onclick = ()=>openMonthEntry(mid, row.getAttribute('data-edit-month'), row.getAttribute('data-label'), row.getAttribute('data-default'));
+  });
+}
+
+function openAddGuardian(){
+  if(!requireUnlocked()) return;
+  const bg = openModal(`
+    <button class="close-x">✕</button>
+    <h3>নতুন জিম্মাদার যোগ করুন</h3>
+    <div class="field"><label>নাম</label><input id="gName" placeholder="জিম্মাদারের পূর্ণ নাম"></div>
+    <div class="field"><label>ফোন নম্বর (ঐচ্ছিক)</label><input id="gPhone" placeholder="01XXXXXXXXX"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelBtn">বাতিল</button>
+      <button class="btn brass" id="saveBtn">সংরক্ষণ করুন</button>
+    </div>`);
+  bg.querySelector('.close-x').onclick = ()=>closeModal(bg);
+  bg.querySelector('#cancelBtn').onclick = ()=>closeModal(bg);
+  bg.querySelector('#saveBtn').onclick = async ()=>{
+    const name = bg.querySelector('#gName').value.trim();
+    if(!name){ toast('নাম লিখুন'); return; }
+    const data = await apiMutate('POST','/guardians', {name, phone: bg.querySelector('#gPhone').value.trim()});
+    if(!data) return;
+    DATA.guardians.push(withId(data));
+    closeModal(bg); toast('জিম্মাদার যোগ হয়েছে'); render();
+  };
+}
+
+function openEditGuardian(gid){
+  if(!requireUnlocked()) return;
+  const g = DATA.guardians.find(x=>x.id===gid);
+  const bg = openModal(`
+    <button class="close-x">✕</button>
+    <h3>জিম্মাদারের তথ্য পরিবর্তন</h3>
+    <div class="field"><label>নাম</label><input id="gName" value="${esc(g.name)}"></div>
+    <div class="field"><label>ফোন নম্বর</label><input id="gPhone" value="${esc(g.phone||'')}"></div>
+    <div class="modal-actions">
+      <button class="btn danger" id="delBtn">মুছে ফেলুন</button>
+      <button class="btn brass" id="saveBtn">সংরক্ষণ</button>
+    </div>`);
+  bg.querySelector('.close-x').onclick = ()=>closeModal(bg);
+  bg.querySelector('#saveBtn').onclick = async ()=>{
+    const data = await apiMutate('PUT','/guardians/'+gid, {
+      name: bg.querySelector('#gName').value.trim() || g.name,
+      phone: bg.querySelector('#gPhone').value.trim(),
+    });
+    if(!data) return;
+    Object.assign(g, withId(data));
+    closeModal(bg); toast('তথ্য হালনাগাদ হয়েছে'); render();
+  };
+  bg.querySelector('#delBtn').onclick = async ()=>{
+    if(!confirm('এই জিম্মাদারকে মুছে ফেলতে চান? (সদস্যরা থেকে যাবে, তবে জিম্মাদারবিহীন হয়ে যাবে)')) return;
+    const data = await apiMutate('DELETE','/guardians/'+gid);
+    if(!data) return;
+    DATA.guardians = DATA.guardians.filter(x=>x.id!==gid);
+    DATA.members.forEach(m=>{ if(m.guardianId===gid) m.guardianId=null; });
+    closeModal(bg); nav('guardians');
+  };
+}
+
+function guardianOptionsHtml(selectedId){
+  return DATA.guardians.map(g=>`<option value="${g.id}" ${g.id===selectedId?'selected':''}>${esc(g.name)}</option>`).join('');
+}
+
+function openAddMember(gid){
+  if(!requireUnlocked()) return;
+  const bg = openModal(`
+    <button class="close-x">✕</button>
+    <h3>নতুন সদস্য যোগ করুন</h3>
+    <div class="field"><label>নাম</label><input id="mName" placeholder="সদস্যের পূর্ণ নাম"></div>
+    <div class="field"><label>জিম্মাদার</label>
+      <select id="mGuardian"><option value="">নির্বাচন করুন (ঐচ্ছিক)</option>${guardianOptionsHtml(gid)}</select>
+    </div>
+    <div class="field"><label>ফোন নম্বর (ঐচ্ছিক)</label><input id="mPhone"></div>
+    <div class="field"><label>ঠিকানা (ঐচ্ছিক)</label><input id="mAddress"></div>
+    <div class="field"><label>শেয়ার সংখ্যা</label><input id="mShares" type="number" inputmode="numeric" value="1"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelBtn">বাতিল</button>
+      <button class="btn brass" id="saveBtn">সংরক্ষণ করুন</button>
+    </div>`);
+  bg.querySelector('.close-x').onclick = ()=>closeModal(bg);
+  bg.querySelector('#cancelBtn').onclick = ()=>closeModal(bg);
+  bg.querySelector('#saveBtn').onclick = async ()=>{
+    const name = bg.querySelector('#mName').value.trim();
+    if(!name){ toast('নাম লিখুন'); return; }
+    const data = await apiMutate('POST','/members', {
+      name, guardianId: bg.querySelector('#mGuardian').value||null,
+      phone: bg.querySelector('#mPhone').value.trim(),
+      address: bg.querySelector('#mAddress').value.trim(),
+      shares: Number(bg.querySelector('#mShares').value)||0,
+    });
+    if(!data) return;
+    DATA.members.push(withId(data));
+    closeModal(bg); toast('সদস্য যোগ হয়েছে'); render();
+  };
+}
+
+function openBulkAdd(gid){
+  if(!requireUnlocked()) return;
+  const bg = openModal(`
+    <button class="close-x">✕</button>
+    <h3>একসাথে অনেক সদস্য যোগ করুন</h3>
+    <div class="field"><label>প্রতি লাইনে একটি করে নাম লিখুন (৯০ জনের নাম একসাথে পেস্ট করতে পারেন)</label>
+      <textarea id="bulkNames" placeholder="মোঃ করিম
+মোঃ রহিম
+আব্দুল্লাহ..." style="min-height:180px"></textarea>
+    </div>
+    <div class="field"><label>জিম্মাদার</label>
+      <select id="mGuardian"><option value="">নির্বাচন করুন (ঐচ্ছিক)</option>${guardianOptionsHtml(gid)}</select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelBtn">বাতিল</button>
+      <button class="btn brass" id="saveBtn">সবাইকে যোগ করুন</button>
+    </div>`);
+  bg.querySelector('.close-x').onclick = ()=>closeModal(bg);
+  bg.querySelector('#cancelBtn').onclick = ()=>closeModal(bg);
+  bg.querySelector('#saveBtn').onclick = async ()=>{
+    const lines = bg.querySelector('#bulkNames').value.split('\n').map(s=>s.trim()).filter(Boolean);
+    if(!lines.length){ toast('কমপক্ষে একটি নাম লিখুন'); return; }
+    const guardianId = bg.querySelector('#mGuardian').value||null;
+    const data = await apiMutate('POST','/members/bulk', {names:lines, guardianId});
+    if(!data) return;
+    DATA.members.push(...data.map(withId));
+    closeModal(bg); toast(`${toBn(lines.length)} জন সদস্য যোগ হয়েছে`); render();
+  };
+}
+
+function openEditMember(mid){
+  if(!requireUnlocked()) return;
+  const m = DATA.members.find(x=>x.id===mid);
+  const bg = openModal(`
+    <button class="close-x">✕</button>
+    <h3>সদস্যের তথ্য পরিবর্তন</h3>
+    <div class="field"><label>নাম</label><input id="mName" value="${esc(m.name)}"></div>
+    <div class="field"><label>জিম্মাদার</label><select id="mGuardian"><option value="">নির্ধারিত নয়</option>${guardianOptionsHtml(m.guardianId)}</select></div>
+    <div class="field"><label>ফোন নম্বর</label><input id="mPhone" value="${esc(m.phone||'')}"></div>
+    <div class="field"><label>ঠিকানা</label><input id="mAddress" value="${esc(m.address||'')}"></div>
+    <div class="field"><label>শেয়ার সংখ্যা</label><input id="mShares" type="number" inputmode="numeric" value="${m.shares||0}"></div>
+    <div class="modal-actions">
+      <button class="btn danger" id="delBtn">সদস্য মুছুন</button>
+      <button class="btn brass" id="saveBtn">সংরক্ষণ</button>
+    </div>`);
+  bg.querySelector('.close-x').onclick = ()=>closeModal(bg);
+  bg.querySelector('#saveBtn').onclick = async ()=>{
+    const data = await apiMutate('PUT','/members/'+mid, {
+      name: bg.querySelector('#mName').value.trim(),
+      guardianId: bg.querySelector('#mGuardian').value||null,
+      phone: bg.querySelector('#mPhone').value.trim(),
+      address: bg.querySelector('#mAddress').value.trim(),
+      shares: Number(bg.querySelector('#mShares').value)||0,
+    });
+    if(!data) return;
+    Object.assign(m, withId(data));
+    closeModal(bg); toast('তথ্য হালনাগাদ হয়েছে'); render();
+  };
+  bg.querySelector('#delBtn').onclick = async ()=>{
+    if(!confirm('এই সদস্যকে মুছে ফেলতে চান? তার সকল মাসিক জমার হিসাবও মুছে যাবে।')) return;
+    const data = await apiMutate('DELETE','/members/'+mid);
+    if(!data) return;
+    DATA.members = DATA.members.filter(x=>x.id!==mid);
+    delete monthsCache[mid];
+    await refreshSummary();
+    closeModal(bg); nav('members');
+  };
+}
+
+function openMonthEntry(mid, ym, label, defaultDate){
+  if(!requireUnlocked()) return;
+  loadMonths(mid).then(months=>{
+    const e = months[ym];
+    const yearMatch = ym.match(/^(\d{4})-/);
+    const monthLabel = yearMatch ? `${label||''} ${toBn(yearMatch[1])}` : (label||'');
+    const bg = openModal(`
+      <button class="close-x">✕</button>
+      <h3>${monthLabel} — জমার হিসাব</h3>
+      <div class="field"><label>জমার তারিখ</label><input id="tDate" type="date" value="${e?e.date:(defaultDate||todayISO())}"></div>
+      <div class="field"><label>টাকার পরিমাণ</label><input id="tAmt" type="number" inputmode="numeric" value="${e?e.amount:''}" placeholder="০"></div>
+      <div class="field"><label>বই নং / রশিদ নং (ঐচ্ছিক)</label><input id="tBook" value="${e?esc(e.bookNo||''):''}" placeholder="যেমন: ১২৩"></div>
+      <div class="modal-actions">
+        ${e?'<button class="btn danger" id="delBtn">মুছুন</button>':'<button class="btn ghost" id="cancelBtn">বাতিল</button>'}
+        <button class="btn brass" id="saveBtn">সংরক্ষণ করুন</button>
+      </div>`);
+    bg.querySelector('.close-x').onclick = ()=>closeModal(bg);
+    const cancelBtn = bg.querySelector('#cancelBtn'); if(cancelBtn) cancelBtn.onclick = ()=>closeModal(bg);
+    bg.querySelector('#saveBtn').onclick = async ()=>{
+      const amt = Number(bg.querySelector('#tAmt').value);
+      if(!amt || amt<=0){ toast('সঠিক পরিমাণ লিখুন'); return; }
+      const date = bg.querySelector('#tDate').value || defaultDate || todayISO();
+      const bookNo = bg.querySelector('#tBook').value.trim();
+      const data = await apiMutate('PUT', `/members/${mid}/entries/${ym}`, {date, amount:amt, bookNo});
+      if(!data) return;
+      months[ym] = {date:data.date, amount:data.amount, bookNo:data.bookNo};
+      monthsCache[mid] = months;
+      await refreshSummary();
+      closeModal(bg); toast('জমার হিসাব সংরক্ষণ হয়েছে'); render();
+    };
+    const delBtn = bg.querySelector('#delBtn');
+    if(delBtn){
+      delBtn.onclick = async ()=>{
+        if(!confirm('এই এন্ট্রি মুছে ফেলতে চান?')) return;
+        const data = await apiMutate('DELETE', `/members/${mid}/entries/${ym}`);
+        if(!data) return;
+        delete months[ym];
+        monthsCache[mid] = months;
+        await refreshSummary();
+        closeModal(bg); toast('এন্ট্রি মুছে ফেলা হয়েছে'); render();
+      };
+    }
+  });
+}
+
+function openAddEntry(type){
+  if(!requireUnlocked()) return;
+  const title = type==='income' ? 'নতুন আয় যোগ করুন' : 'নতুন ব্যয় যোগ করুন';
+  const bg = openModal(`
+    <button class="close-x">✕</button>
+    <h3>${title}</h3>
+    <div class="field"><label>তারিখ</label><input id="eDate" type="date" value="${todayISO()}"></div>
+    <div class="field"><label>বিবরণ</label><input id="eDesc" placeholder="${type==='income'?'যেমন: সদস্য চাঁদা, অনুদান':'যেমন: স্টেশনারি, আপ্যায়ন'}"></div>
+    <div class="field"><label>টাকার পরিমাণ</label><input id="eAmt" type="number" inputmode="numeric" placeholder="০"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelBtn">বাতিল</button>
+      <button class="btn ${type==='income'?'brass':'danger'}" id="saveBtn">সংরক্ষণ করুন</button>
+    </div>`);
+  bg.querySelector('.close-x').onclick = ()=>closeModal(bg);
+  bg.querySelector('#cancelBtn').onclick = ()=>closeModal(bg);
+  bg.querySelector('#saveBtn').onclick = async ()=>{
+    const amt = Number(bg.querySelector('#eAmt').value);
+    if(!amt || amt<=0){ toast('সঠিক পরিমাণ লিখুন'); return; }
+    const data = await apiMutate('POST','/ledger/'+type, {
+      date: bg.querySelector('#eDate').value||todayISO(),
+      desc: bg.querySelector('#eDesc').value.trim(),
+      amount: amt,
+    });
+    if(!data) return;
+    DATA[type].push(withId(data));
+    await refreshSummary();
+    closeModal(bg); toast('সংরক্ষণ হয়েছে'); render();
+  };
+}
+
+async function deleteEntry(type, id){
+  if(!requireUnlocked()) return;
+  if(!confirm('এই এন্ট্রিটি মুছে ফেলতে চান?')) return;
+  const data = await apiMutate('DELETE', `/ledger/${type}/${id}`);
+  if(!data) return;
+  DATA[type] = DATA[type].filter(x=>x.id!==id);
+  await refreshSummary();
+  toast('মুছে ফেলা হয়েছে');
+  render();
+}
+
+function openAddLevy(){
+  if(!requireUnlocked()) return;
+  const bg = openModal(`
+    <button class="close-x">✕</button>
+    <h3>নতুন এককালীন চাঁদা যোগ করুন</h3>
+    <div class="field"><label>উপলক্ষ / শিরোনাম</label><input id="lvTitle" placeholder="যেমন: ঈদ ফান্ড, বার্ষিক সভা চাঁদা"></div>
+    <div class="field"><label>টাকার পরিমাণ (প্রতি শেয়ারে)</label><input id="lvAmt" type="number" inputmode="numeric" placeholder="০"></div>
+    <div class="field"><label>তারিখ</label><input id="lvDate" type="date" value="${todayISO()}"></div>
+    <div class="field hint">এটা যোগ করলে সাথে সাথে সব সদস্যের "বকেয়া"-তে (শেয়ার সংখ্যা × এই হার) যোগ হয়ে যাবে।</div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelBtn">বাতিল</button>
+      <button class="btn brass" id="saveBtn">যোগ করুন</button>
+    </div>`);
+  bg.querySelector('.close-x').onclick = ()=>closeModal(bg);
+  bg.querySelector('#cancelBtn').onclick = ()=>closeModal(bg);
+  bg.querySelector('#saveBtn').onclick = async ()=>{
+    const title = bg.querySelector('#lvTitle').value.trim();
+    const amt = Number(bg.querySelector('#lvAmt').value);
+    if(!title){ toast('শিরোনাম লিখুন'); return; }
+    if(!amt || amt<=0){ toast('সঠিক পরিমাণ লিখুন'); return; }
+    const data = await apiMutate('POST','/levies', {title, amount:amt, date: bg.querySelector('#lvDate').value||todayISO()});
+    if(!data) return;
+    DATA.specialLevies.push(withId(data));
+    closeModal(bg); toast('এককালীন চাঁদা যোগ হয়েছে'); render();
+  };
+}
+
+async function deleteLevy(id){
+  if(!requireUnlocked()) return;
+  if(!confirm('এই এককালীন চাঁদাটি মুছে ফেলতে চান?')) return;
+  const data = await apiMutate('DELETE','/levies/'+id);
+  if(!data) return;
+  DATA.specialLevies = DATA.specialLevies.filter(x=>x.id!==id);
+  toast('মুছে ফেলা হয়েছে');
+  render();
+}
+
+async function saveAbout(){
+  if(!requireUnlocked()) return;
+  const data = await apiMutate('PUT','/org', {
+    name: document.getElementById('f_name').value.trim() || 'স্বপ্ন সঞ্চয় সমবায় সমিতি',
+    tagline: document.getElementById('f_tagline').value.trim(),
+    established: document.getElementById('f_established').value.trim(),
+    address: document.getElementById('f_address').value.trim(),
+    contact: document.getElementById('f_contact').value.trim(),
+    contactPhone: document.getElementById('f_phone').value.trim(),
+    heroImageUrl: document.getElementById('f_hero').value.trim(),
+    ratePerShare: Number(document.getElementById('f_rate').value)||0,
+    onetimeRatePerShare: Number(document.getElementById('f_otrate').value)||0,
+  });
+  if(!data) return;
+  DATA.org = data;
+  toast('তথ্য সংরক্ষণ হয়েছে');
+  render();
+}
+
+/* ================= INIT ================= */
+(async function init(){
+  document.getElementById('root').innerHTML = `<div class="loading">সমিতির খাতা খোলা হচ্ছে...</div>`;
+  await loadAll();
+  if(authToken){
+    const r = await apiCall('GET','/auth/verify');
+    if(r.ok) unlocked = true;
+    else { authToken = null; localStorage.removeItem('samity_admin_token'); }
+  }
+  render();
+})();
+</script>
+</body>
+</html>
