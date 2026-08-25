@@ -330,6 +330,7 @@ const ICN = {
   scale:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v18M7 21h10M5 7h14M5 7l-3 6a3 3 0 0 0 6 0L5 7zM19 7l-3 6a3 3 0 0 0 6 0l-3-6z"/></svg>`,
   lock:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>`,
   unlock:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V7a4 4 0 0 1 7.6-1.8"/></svg>`,
+  alert:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/></svg>`,
 };
 
 /* ================= ROUTER ================= */
@@ -370,6 +371,7 @@ async function render(){
   else if(page==='members') body = viewMembers();
   else if(page==='member') body = await viewMemberDetail(id);
   else if(page==='income-expense') body = viewIncomeExpense();
+  else if(page==='dues') body = await viewDues();
   else if(page==='about') body = viewAbout();
   else body = viewHome();
 
@@ -430,6 +432,11 @@ function viewHome(){
       <div class="icn">${ICN.book}</div>
       <div class="lbl">সমিতির তথ্য</div>
       <div class="sub">বিস্তারিত জানুন</div>
+    </a>
+    <a class="opt-card" data-nav="dues">
+      <div class="icn">${ICN.alert}</div>
+      <div class="lbl">বকেয়া</div>
+      <div class="sub">যাদের বাকি আছে</div>
     </a>
   </div>`;
 }
@@ -641,6 +648,62 @@ function entryRow(e, type){
     <div class="eamt">${type==='expense'?'−':''}${taka(e.amount)}</div>
     ${unlocked?`<button class="edel" data-del-entry="${e.id}" data-etype="${type}">✕</button>`:''}
   </div>`;
+}
+
+async function computeAllDues(){
+  const results = [];
+  await Promise.all(DATA.members.map(async m=>{
+    const months = await loadMonths(m.id);
+    const fin = memberFinance(m, months);
+    if(fin.due > 0){
+      const dueLabels = [];
+      const regularSlots = monthsInRange().filter(o=>!o.onetime);
+      regularSlots.slice(0, elapsedRegularMonths()).forEach(o=>{
+        if(!months[o.key]) dueLabels.push(`${o.label} ${toBn(o.y)}`);
+      });
+      const onetimeSlots = monthsInRange().filter(o=>o.onetime);
+      onetimeSlots.slice(0, elapsedOnetimeCount()).forEach(o=>{
+        if(!months[o.key]) dueLabels.push(`এককালীন ${toBn(o.y)}`);
+      });
+      DATA.specialLevies.forEach(lv=>{
+        if(!months['levy:'+lv.id]) dueLabels.push(lv.title);
+      });
+      results.push({ member:m, due:fin.due, dueLabels });
+    }
+  }));
+  results.sort((a,b)=>b.due-a.due);
+  return results;
+}
+
+function duesRowHtml(r){
+  const shown = r.dueLabels.slice(0,6);
+  const extra = r.dueLabels.length - shown.length;
+  const tags = shown.map(l=>`<span class="tag-pill" style="background:rgba(139,46,46,.12);color:var(--red);margin:2px 4px 2px 0;">${esc(l)}</span>`).join('')
+    + (extra>0 ? `<span class="tag-pill" style="opacity:.6">+${toBn(extra)}</span>` : '');
+  return `<a class="list-item" data-nav="member/${r.member.id}" style="align-items:flex-start;">
+    <div class="avatar">${esc(initials(r.member.name))}</div>
+    <div class="meta">
+      <div class="name ${r.member.name?'':'placeholder'}">সদস্য নং ${toBn(r.member.memberNo)} — ${r.member.name?esc(r.member.name):'নাম যোগ করুন'}</div>
+      <div class="sub" style="margin-top:5px;line-height:1.9;">${tags}</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0;padding-top:2px;">
+      <div style="font-family:'Tiro Bangla',serif;color:var(--red);font-weight:700;font-size:15px;">${taka(r.due)}</div>
+    </div>
+  </a>`;
+}
+
+async function viewDues(){
+  const results = await computeAllDues();
+  const totalDue = results.reduce((s,r)=>s+r.due,0);
+  const rows = results.map(duesRowHtml).join('');
+  return `
+  <h2 class="section-title">বকেয়া সদস্যবৃন্দ</h2>
+  <div class="stat-row">
+    <div class="stat"><b>${toBn(results.length)}</b><span>বকেয়া সদস্য</span></div>
+    <div class="stat"><b>${taka(totalDue)}</b><span>মোট বকেয়া</span></div>
+  </div>
+  ${rows || emptyState('chest','কোনো সদস্যের বকেয়া নেই — সবাই হালনাগাদ!')}
+  `;
 }
 
 function viewAbout(){
