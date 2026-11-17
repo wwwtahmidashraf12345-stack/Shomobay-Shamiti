@@ -81,6 +81,10 @@
   .stat{flex:1;background:var(--green);color:#F1E9D2;border-radius:10px;padding:12px 8px;text-align:center;}
   .stat b{font-family:'Tiro Bangla',serif;font-size:17px;display:block;color:var(--brass);}
   .stat span{font-size:10.5px;color:#cdbfa0;}
+  .summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 20px;}
+  .summary-card{background:var(--green);color:#F1E9D2;border-radius:10px;padding:14px 10px;text-align:center;}
+  .summary-card b{font-family:'Tiro Bangla',serif;font-size:18px;display:block;color:var(--brass);}
+  .summary-card span{font-size:11px;color:#cdbfa0;}
 
   h2.section-title{font-family:'Tiro Bangla',serif;font-size:20px;color:var(--green);
     border-bottom:2px solid var(--brass);display:inline-block;padding-bottom:4px;margin:4px 0 16px;}
@@ -137,6 +141,12 @@
   .month-row .mplus{color:var(--brass-dim);font-size:16px;flex-shrink:0;opacity:.6;}
   .month-row.onetime .mn{font-style:italic;}
   .month-row.onetime{border-left-style:dashed;}
+  .bulk-month-list{display:flex;flex-direction:column;gap:6px;max-height:230px;overflow-y:auto;}
+  .bulk-month-option{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);
+    border-radius:7px;padding:8px 10px;font-size:13px;}
+  .field label.bulk-month-option{display:flex;margin-bottom:0;}
+  .field .bulk-month-option input{width:18px;height:18px;padding:0;flex-shrink:0;accent-color:var(--green);}
+  .bulk-month-option span{flex:1;}
 
   /* ---------- MEMBER INFO GRID ---------- */
   .info-box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:4px 16px;margin-bottom:16px;}
@@ -258,7 +268,10 @@ function bnDate(iso){
   const [y,m,d]=iso.split('-');
   return `${toBn(parseInt(d))} ${BN_MONTHS[parseInt(m)-1]}, ${toBn(y)}`;
 }
-function todayISO(){ return new Date().toISOString().slice(0,10); }
+function todayISO(){
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+}
 function esc(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function initials(name){ return (name||'?').trim().charAt(0) || '?'; }
 function toast(msg, isErr){
@@ -276,14 +289,14 @@ function monthsInRange(){
   const arr=[];
   [10,11,12].forEach(m=>{
     const mm=String(m).padStart(2,'0');
-    arr.push({y:2024,key:`2024-${mm}`,label:BN_MONTHS[m-1],defaultDate:`2024-${mm}-01`});
+    arr.push({y:2024,key:`2024-${mm}`,label:BN_MONTHS[m-1]});
   });
   for(let y=2025;y<=2030;y++){
     for(let m=1;m<=12;m++){
       const mm=String(m).padStart(2,'0');
-      arr.push({y,key:`${y}-${mm}`,label:BN_MONTHS[m-1],defaultDate:`${y}-${mm}-01`});
-      if(m===7) arr.push({y,key:`${y}-OT1`,label:'এককালীন',defaultDate:`${y}-07-01`,onetime:true});
-      if(m===12) arr.push({y,key:`${y}-OT2`,label:'এককালীন',defaultDate:`${y}-12-01`,onetime:true});
+      arr.push({y,key:`${y}-${mm}`,label:BN_MONTHS[m-1]});
+      if(m===7) arr.push({y,key:`${y}-OT1`,label:'এককালীন',onetime:true});
+      if(m===12) arr.push({y,key:`${y}-OT2`,label:'এককালীন',onetime:true});
     }
   }
   return arr;
@@ -351,6 +364,7 @@ async function render(){
   <nav>
     <div class="nav-links">
       <button data-nav="home" class="${page==='home'?'active':''}">হোম</button>
+      <button data-nav="summary" class="${page==='summary'?'active':''}">সমিতির সারাংশ</button>
       <button data-nav="guardians" class="${page==='guardians'||page==='guardian'?'active':''}">জিম্মাদারগণ</button>
       <button data-nav="members" class="${page==='members'||page==='member'?'active':''}">সকল সদস্য</button>
       <button data-nav="income-expense" class="${page==='income-expense'?'active':''}">আয়-ব্যয়</button>
@@ -366,6 +380,7 @@ async function render(){
 
   let body;
   if(page==='home') body = viewHome();
+  else if(page==='summary') body = viewSummary();
   else if(page==='guardians') body = viewGuardians();
   else if(page==='guardian') body = await viewGuardianDetail(id);
   else if(page==='members') body = viewMembers();
@@ -418,6 +433,11 @@ function viewHome(){
       <div class="lbl">জিম্মাদারগণ</div>
       <div class="sub">${toBn(totalGuardians)} জন জিম্মাদার</div>
     </a>
+    <a class="opt-card" data-nav="summary">
+      <div class="icn">${ICN.scale}</div>
+      <div class="lbl">সমিতির সারাংশ</div>
+      <div class="sub">সমিতির সম্পূর্ণ হিসাব দেখুন</div>
+    </a>
     <a class="opt-card" data-nav="members">
       <div class="icn">${ICN.people}</div>
       <div class="lbl">সকল সদস্য</div>
@@ -438,6 +458,30 @@ function viewHome(){
       <div class="lbl">বকেয়া</div>
       <div class="sub">যাদের বাকি আছে</div>
     </a>
+  </div>`;
+}
+
+function viewSummary(){
+  const summary = DATA.summary || {};
+  const values = [
+    ['সদস্য সংখ্যা', toBn(summary.memberCount || 0)],
+    ['মোট জমা হওয়ার কথা', taka(summary.totalExpected)],
+    ['সদস্যদের মোট জমা', taka(summary.savingsTotal)],
+    ['মোট বকেয়া', taka(summary.totalDue)],
+    ['সম্পূর্ণ পরিশোধ করেছেন', `${toBn(summary.paidCount || 0)} জন`],
+    ['বকেয়া আছে', `${toBn(summary.dueCount || 0)} জন`],
+    ['মোট ব্যয়', taka(summary.totalExpense)],
+    ['অন্যান্য আয়', taka(summary.totalIncome)],
+    ['বর্তমান ব্যালেন্স', taka(summary.balance)],
+  ];
+  return `
+  <h2 class="section-title">সমিতির সারাংশ</h2>
+  <div class="summary-grid">
+    ${values.map(([label, value]) => `<div class="summary-card"><b>${value}</b><span>${label}</span></div>`).join('')}
+  </div>
+  <div class="info-box">
+    <div class="info-row"><div class="k">জিম্মাদার সংখ্যা</div><div class="v">${toBn(summary.guardianCount || 0)} জন</div></div>
+    <div class="info-row"><div class="k">সদস্য চাঁদার হার</div><div class="v">${taka(DATA.org.ratePerShare || 0)} / শেয়ার / মাস</div></div>
   </div>`;
 }
 
@@ -468,6 +512,12 @@ async function viewGuardianDetail(gid){
   const g = DATA.guardians.find(x=>x.id===gid);
   if(!g) return emptyState('shield','জিম্মাদার খুঁজে পাওয়া যায়নি');
   const members = DATA.members.filter(m=>m.guardianId===gid);
+  const finances = await Promise.all(members.map(async m=>{
+    const months = await loadMonths(m.id);
+    return memberFinance(m, months);
+  }));
+  const totalDue = finances.reduce((sum, fin)=>sum+fin.due,0);
+  const dueCount = finances.filter(fin=>fin.due>0).length;
   const items = members.map(m=>`
     <a class="list-item" data-nav="member/${m.id}">
       <div class="avatar">${esc(initials(m.name))}</div>
@@ -484,6 +534,10 @@ async function viewGuardianDetail(gid){
     <button class="btn brass sm" id="addMemberBtn" data-gid="${g.id}">${ICN.plus} সদস্য যোগ করুন</button>
     <button class="btn ghost sm" id="bulkAddBtn" data-gid="${g.id}">একসাথে অনেকজন যোগ করুন</button>
   </div>`:''}
+  <div class="info-box">
+    <div class="info-row due"><div class="k">অধীনস্থদের মোট বকেয়া</div><div class="v">${taka(totalDue)}</div></div>
+    <div class="info-row"><div class="k">বকেয়া সদস্য</div><div class="v">${toBn(dueCount)} জন</div></div>
+  </div>
   ${items || emptyState('people','এই জিম্মাদারের অধীনে এখনো কোনো সদস্য নেই')}
   `;
 }
@@ -539,6 +593,7 @@ async function viewMemberDetail(mid){
   </div>
   ${unlocked?`<div class="toolbar">
     <button class="btn ghost sm" id="editMemberBtn" data-mid="${mid}">তথ্য পরিবর্তন</button>
+    <button class="btn brass sm" id="bulkMonthEntryBtn">${ICN.plus} একাধিক মাসের চাঁদা</button>
   </div>`:''}
   <div class="info-box">
     <div class="info-row"><div class="k">ঠিকানা</div><div class="v" style="font-family:inherit;font-weight:600;font-size:13.5px;text-align:right;">${m.address?esc(m.address):'—'}</div></div>
@@ -564,7 +619,7 @@ function renderLevyRows(months){
     const e = months[key];
     if(e){
       return `
-      <div class="month-row filled" data-edit-month="${key}" data-label="${esc(lv.title)}" data-default="${todayISO()}" style="--yc:var(--brass)">
+      <div class="month-row filled" data-edit-month="${key}" data-label="${esc(lv.title)}" style="--yc:var(--brass)">
         <div class="mn" style="width:auto;max-width:120px;">${esc(lv.title)}</div>
         <div class="mid-info">
           <div class="mdate">${bnDate(e.date)}</div>
@@ -574,7 +629,7 @@ function renderLevyRows(months){
       </div>`;
     }
     return `
-    <div class="month-row" data-edit-month="${key}" data-label="${esc(lv.title)}" data-default="${todayISO()}">
+    <div class="month-row" data-edit-month="${key}" data-label="${esc(lv.title)}">
       <div class="mn" style="width:auto;max-width:120px;">${esc(lv.title)}</div>
       <div class="mempty">${unlocked?'বকেয়া — যোগ করতে চাপুন':'বকেয়া'}</div>
       ${unlocked?`<div class="mplus">${ICN.plus}</div>`:''}
@@ -590,7 +645,7 @@ function renderMonthsList(year, months){
     const otCls = o.onetime ? ' onetime' : '';
     if(e){
       return `
-      <div class="month-row filled${otCls}" data-edit-month="${o.key}" data-label="${esc(o.label)}" data-default="${o.defaultDate}" style="--yc:${YEAR_COLOR[year]}">
+      <div class="month-row filled${otCls}" data-edit-month="${o.key}" data-label="${esc(o.label)}" style="--yc:${YEAR_COLOR[year]}">
         <div class="mn">${o.label}</div>
         <div class="mid-info">
           <div class="mdate">${bnDate(e.date)}</div>
@@ -600,7 +655,7 @@ function renderMonthsList(year, months){
       </div>`;
     }
     return `
-    <div class="month-row${otCls}" data-edit-month="${o.key}" data-label="${esc(o.label)}" data-default="${o.defaultDate}" style="--yc:${YEAR_COLOR[year]}">
+    <div class="month-row${otCls}" data-edit-month="${o.key}" data-label="${esc(o.label)}" style="--yc:${YEAR_COLOR[year]}">
       <div class="mn">${o.label}</div>
       <div class="mempty">${unlocked?'জমা হয়নি — যোগ করতে চাপুন':'জমা হয়নি'}</div>
       ${unlocked?`<div class="mplus">${ICN.plus}</div>`:''}
@@ -876,6 +931,8 @@ function attachPageEvents(page, id){
   if(page==='member'){
     const mid = id;
     const eb = document.getElementById('editMemberBtn'); if(eb) eb.onclick = ()=>openEditMember(mid);
+    const bulkEntryBtn = document.getElementById('bulkMonthEntryBtn');
+    if(bulkEntryBtn) bulkEntryBtn.onclick = ()=>openBulkMonthEntry(mid);
     document.querySelectorAll('.ytab').forEach(t=>{
       t.onclick = async ()=>{
         const y = Number(t.getAttribute('data-year'));
@@ -909,7 +966,7 @@ function attachPageEvents(page, id){
 function attachMonthRowEvents(mid){
   if(!unlocked) return;
   document.querySelectorAll('[data-edit-month]').forEach(row=>{
-    row.onclick = ()=>openMonthEntry(mid, row.getAttribute('data-edit-month'), row.getAttribute('data-label'), row.getAttribute('data-default'));
+    row.onclick = ()=>openMonthEntry(mid, row.getAttribute('data-edit-month'), row.getAttribute('data-label'));
   });
 }
 
@@ -1074,17 +1131,26 @@ function openEditMember(mid){
   };
 }
 
-function openMonthEntry(mid, ym, label, defaultDate){
+function openMonthEntry(mid, ym, label){
   if(!requireUnlocked()) return;
   loadMonths(mid).then(months=>{
     const e = months[ym];
+    const member = DATA.members.find(m=>m.id===mid);
+    const levy = ym.startsWith('levy:')
+      ? DATA.specialLevies.find(item=>item.id===ym.slice(5))
+      : null;
+    const defaultAmount = levy
+      ? Number(levy.amount || 0) * Number(member && member.shares || 0)
+      : ym.includes('-OT')
+        ? Number(DATA.org.onetimeRatePerShare || 0) * Number(member && member.shares || 0)
+        : Number(DATA.org.ratePerShare || 0) * Number(member && member.shares || 0);
     const yearMatch = ym.match(/^(\d{4})-/);
     const monthLabel = yearMatch ? `${label||''} ${toBn(yearMatch[1])}` : (label||'');
     const bg = openModal(`
       <button class="close-x">✕</button>
       <h3>${monthLabel} — জমার হিসাব</h3>
-      <div class="field"><label>জমার তারিখ</label><input id="tDate" type="date" value="${e?e.date:(defaultDate||todayISO())}"></div>
-      <div class="field"><label>টাকার পরিমাণ</label><input id="tAmt" type="number" inputmode="numeric" value="${e?e.amount:''}" placeholder="০"></div>
+      <div class="field"><label>জমার তারিখ</label><input id="tDate" type="date" value="${e?e.date:todayISO()}"></div>
+      <div class="field"><label>টাকার পরিমাণ</label><input id="tAmt" type="number" inputmode="numeric" value="${e?e.amount:defaultAmount}" placeholder="০"></div>
       <div class="field"><label>বই নং / রশিদ নং (ঐচ্ছিক)</label><input id="tBook" value="${e?esc(e.bookNo||''):''}" placeholder="যেমন: ১২৩"></div>
       <div class="modal-actions">
         ${e?'<button class="btn danger" id="delBtn">মুছুন</button>':'<button class="btn ghost" id="cancelBtn">বাতিল</button>'}
@@ -1095,7 +1161,7 @@ function openMonthEntry(mid, ym, label, defaultDate){
     bg.querySelector('#saveBtn').onclick = async ()=>{
       const amt = Number(bg.querySelector('#tAmt').value);
       if(!amt || amt<=0){ toast('সঠিক পরিমাণ লিখুন'); return; }
-      const date = bg.querySelector('#tDate').value || defaultDate || todayISO();
+      const date = bg.querySelector('#tDate').value || todayISO();
       const bookNo = bg.querySelector('#tBook').value.trim();
       const data = await apiMutate('PUT', `/members/${mid}/entries/${ym}`, {date, amount:amt, bookNo});
       if(!data) return;
@@ -1117,6 +1183,76 @@ function openMonthEntry(mid, ym, label, defaultDate){
       };
     }
   });
+}
+
+async function openBulkMonthEntry(mid){
+  if(!requireUnlocked()) return;
+  const member = DATA.members.find(item=>item.id===mid);
+  if(!member) return;
+  const months = await loadMonths(mid);
+  const availableMonths = monthsInRange()
+    .filter(item=>!item.onetime)
+    .slice(0, elapsedRegularMonths())
+    .filter(item=>!months[item.key]);
+  if(!availableMonths.length){
+    toast('একসাথে এন্ট্রি করার বকেয়া মাস নেই');
+    return;
+  }
+  const options = availableMonths.map(item=>`
+    <label class="bulk-month-option">
+      <input type="checkbox" name="bulkMonthKey" value="${item.key}">
+      <span>${item.label} ${toBn(item.y)}</span>
+    </label>`).join('');
+  const bg = openModal(`
+    <button class="close-x">✕</button>
+    <h3>একাধিক মাসের চাঁদা এন্ট্রি</h3>
+    <div class="field">
+      <label class="bulk-month-option"><input id="selectAllBulkMonths" type="checkbox"><span>সব বকেয়া মাস নির্বাচন করুন</span></label>
+      <div class="bulk-month-list">${options}</div>
+    </div>
+    <div class="field"><label>জমার তারিখ</label><input id="bulkDate" type="date" value="${todayISO()}"></div>
+    <div class="field">
+      <label>প্রতি নির্বাচিত মাসের চাঁদা (টাকা)</label>
+      <input id="bulkAmount" type="number" inputmode="numeric" value="${Number(DATA.org.ratePerShare||0)*Number(member.shares||0)}">
+      <div class="hint">এই অঙ্কটি প্রতিটি নির্বাচিত মাসে আলাদাভাবে জমা হবে; চাইলে পরিবর্তন করতে পারেন।</div>
+    </div>
+    <div class="field"><label>বই নং / রশিদ নং (ঐচ্ছিক)</label><input id="bulkBookNo" placeholder="যেমন: ১২৩"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelBtn">বাতিল</button>
+      <button class="btn brass" id="saveBtn">সংরক্ষণ করুন</button>
+    </div>`);
+  const checkboxes = Array.from(bg.querySelectorAll('input[name="bulkMonthKey"]'));
+  bg.querySelector('.close-x').onclick = ()=>closeModal(bg);
+  bg.querySelector('#cancelBtn').onclick = ()=>closeModal(bg);
+  bg.querySelector('#selectAllBulkMonths').onchange = event=>{
+    checkboxes.forEach(input=>{ input.checked = event.target.checked; });
+  };
+  checkboxes.forEach(input=>{
+    input.onchange = ()=>{
+      bg.querySelector('#selectAllBulkMonths').checked = checkboxes.every(item=>item.checked);
+    };
+  });
+  bg.querySelector('#saveBtn').onclick = async ()=>{
+    const keys = checkboxes.filter(input=>input.checked).map(input=>input.value);
+    if(!keys.length){ toast('কমপক্ষে একটি মাস নির্বাচন করুন', true); return; }
+    const amount = Number(bg.querySelector('#bulkAmount').value);
+    if(!amount || amount<=0){ toast('সঠিক পরিমাণ লিখুন', true); return; }
+    const data = await apiMutate('POST', `/members/${mid}/entries/bulk`, {
+      keys,
+      date: bg.querySelector('#bulkDate').value || todayISO(),
+      amount,
+      bookNo: bg.querySelector('#bulkBookNo').value.trim(),
+    });
+    if(!data) return;
+    data.forEach(entry=>{
+      months[entry.key] = {date:entry.date, amount:entry.amount, bookNo:entry.bookNo};
+    });
+    monthsCache[mid] = months;
+    await refreshSummary();
+    closeModal(bg);
+    toast(`${toBn(data.length)} মাসের জমা সংরক্ষণ হয়েছে`);
+    render();
+  };
 }
 
 function openAddEntry(type){

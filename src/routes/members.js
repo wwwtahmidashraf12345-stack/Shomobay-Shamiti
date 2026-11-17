@@ -57,6 +57,52 @@ router.get('/:id/entries', async (req, res) => {
   res.json(map);
 });
 
+router.post('/:id/entries/bulk', requireAdmin, async (req, res) => {
+  const keys = req.body.keys;
+  const amount = Number(req.body.amount);
+  const date = String(req.body.date || '');
+  if (!Array.isArray(keys) || !keys.length || keys.some(key => typeof key !== 'string')) {
+    return res.status(400).json({ error: 'কমপক্ষে একটি মাস নির্বাচন করুন' });
+  }
+  if (new Set(keys).size !== keys.length) {
+    return res.status(400).json({ error: 'একই মাস একাধিকবার নির্বাচন করা যাবে না' });
+  }
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return res.status(400).json({ error: 'সঠিক পরিমাণ দিন' });
+  }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return res.status(400).json({ error: 'সঠিক তারিখ দিন' });
+  }
+  const now = new Date();
+  const latestYear = Math.min(now.getFullYear(), 2030);
+  const latestMonth = now.getFullYear() > 2030 ? 12 : now.getMonth() + 1;
+  const invalidMonth = keys.some(key => {
+    const match = /^(\d{4})-(\d{2})$/.exec(key);
+    if (!match) return true;
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    return month < 1 || month > 12 || year < 2024 || year > latestYear
+      || (year === 2024 && month < 10)
+      || (year === latestYear && month > latestMonth);
+  });
+  if (invalidMonth) return res.status(400).json({ error: 'নির্বাচিত মাসের হিসাব করা যাবে না' });
+  if (!await Member.exists({ _id: req.params.id })) {
+    return res.status(404).json({ error: 'সদস্য খুঁজে পাওয়া যায়নি' });
+  }
+  const existing = await Entry.find({ memberId: req.params.id, key: { $in: keys } }, 'key');
+  if (existing.length) {
+    return res.status(409).json({ error: 'নির্বাচিত মাসের কিছুতে আগে থেকেই জমা আছে — তালিকা হালনাগাদ করে আবার চেষ্টা করুন' });
+  }
+  const entries = await Entry.insertMany(keys.map(key => ({
+    memberId: req.params.id,
+    key,
+    date,
+    amount,
+    bookNo: String(req.body.bookNo || '').trim(),
+  })));
+  res.json(entries);
+});
+
 // একটা নির্দিষ্ট key (মাস/এককালীন/লেভি) এর জমা যোগ বা পরিবর্তন করা
 router.put('/:id/entries/:key', requireAdmin, async (req, res) => {
   const { date, amount, bookNo } = req.body;
