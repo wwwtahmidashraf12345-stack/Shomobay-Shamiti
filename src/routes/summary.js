@@ -59,6 +59,7 @@ router.get('/', async (req, res) => {
   res.json({
     guardianCount: guardians,
     memberCount: members.length,
+    totalShares,
     savingsTotal,
     totalIncome,
     totalExpense,

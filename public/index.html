@@ -51,6 +51,7 @@
   nav{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);
     display:flex;align-items:stretch;box-shadow:0 2px 8px rgba(0,0,0,.06);}
   .nav-links{display:flex;flex:1;overflow-x:auto;gap:2px;justify-content:center;}
+  @media(max-width:600px){.nav-links{justify-content:flex-start;}}
   nav button{background:none;border:none;padding:12px 8px;font-size:13.5px;color:var(--ink-soft);
     border-bottom:3px solid transparent;white-space:nowrap;font-weight:600;flex-shrink:0;}
   nav button.active{color:var(--green);border-bottom-color:var(--red);}
@@ -465,6 +466,7 @@ function viewSummary(){
   const summary = DATA.summary || {};
   const values = [
     ['সদস্য সংখ্যা', toBn(summary.memberCount || 0)],
+    ['মোট শেয়ার সংখ্যা', toBn(summary.totalShares || 0)],
     ['মোট জমা হওয়ার কথা', taka(summary.totalExpected)],
     ['সদস্যদের মোট জমা', taka(summary.savingsTotal)],
     ['মোট বকেয়া', taka(summary.totalDue)],
@@ -593,7 +595,6 @@ async function viewMemberDetail(mid){
   </div>
   ${unlocked?`<div class="toolbar">
     <button class="btn ghost sm" id="editMemberBtn" data-mid="${mid}">তথ্য পরিবর্তন</button>
-    <button class="btn brass sm" id="bulkMonthEntryBtn">${ICN.plus} একাধিক মাসের চাঁদা</button>
   </div>`:''}
   <div class="info-box">
     <div class="info-row"><div class="k">ঠিকানা</div><div class="v" style="font-family:inherit;font-weight:600;font-size:13.5px;text-align:right;">${m.address?esc(m.address):'—'}</div></div>
@@ -605,6 +606,9 @@ async function viewMemberDetail(mid){
   ${Number(DATA.org.ratePerShare||0)===0?'<div class="rate-hint">প্রত্যাশিত জমা সঠিকভাবে দেখাতে "তথ্য" পেইজে প্রতি শেয়ারের মাসিক চাঁদার হার বসান</div>':''}
   ${renderLevyRows(months)}
   <h2 class="section-title" style="font-size:16px">মাসভিত্তিক জমার হিসাব</h2>
+  ${unlocked?`<div class="toolbar">
+    <button class="btn brass sm" id="bulkMonthEntryBtn">${ICN.plus} চেকবক্সে মাস বাছাই করে চাঁদা এন্ট্রি</button>
+  </div>`:''}
   <div class="year-tabs" id="yearTabs">
     ${[2024,2025,2026,2027,2028,2029,2030].map(y=>`<button class="ytab ${activeYear===y?'active':''}" data-year="${y}" style="--yc:${YEAR_COLOR[y]}">${toBn(y)}</button>`).join('')}
   </div>
