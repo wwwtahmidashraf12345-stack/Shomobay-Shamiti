@@ -309,6 +309,9 @@ function elapsedRegularMonths(){
   if(y<2024 || (y===2024 && m<10)) return 0;
   return (y-2024)*12 + (m-10) + 1;
 }
+function regularMonthsDue(){
+  return monthsInRange().filter(item=>!item.onetime).slice(0, elapsedRegularMonths());
+}
 function elapsedOnetimeCount(){
   const now = new Date();
   let y=now.getFullYear(), m=now.getMonth()+1;
@@ -970,7 +973,15 @@ function attachPageEvents(page, id){
 function attachMonthRowEvents(mid){
   if(!unlocked) return;
   document.querySelectorAll('[data-edit-month]').forEach(row=>{
-    row.onclick = ()=>openMonthEntry(mid, row.getAttribute('data-edit-month'), row.getAttribute('data-label'));
+    row.onclick = ()=>{
+      const key = row.getAttribute('data-edit-month');
+      if(/^\d{4}-\d{2}$/.test(key) && !row.classList.contains('filled')
+        && regularMonthsDue().some(item=>item.key===key)){
+        openBulkMonthEntry(mid, key);
+        return;
+      }
+      openMonthEntry(mid, key, row.getAttribute('data-label'));
+    };
   });
 }
 
@@ -1189,29 +1200,26 @@ function openMonthEntry(mid, ym, label){
   });
 }
 
-async function openBulkMonthEntry(mid){
+async function openBulkMonthEntry(mid, selectedKey){
   if(!requireUnlocked()) return;
   const member = DATA.members.find(item=>item.id===mid);
   if(!member) return;
   const months = await loadMonths(mid);
-  const availableMonths = monthsInRange()
-    .filter(item=>!item.onetime)
-    .slice(0, elapsedRegularMonths())
-    .filter(item=>!months[item.key]);
+  const availableMonths = regularMonthsDue().filter(item=>!months[item.key]);
   if(!availableMonths.length){
     toast('একসাথে এন্ট্রি করার বকেয়া মাস নেই');
     return;
   }
   const options = availableMonths.map(item=>`
     <label class="bulk-month-option">
-      <input type="checkbox" name="bulkMonthKey" value="${item.key}">
+      <input type="checkbox" name="bulkMonthKey" value="${item.key}" ${item.key===selectedKey?'checked':''}>
       <span>${item.label} ${toBn(item.y)}</span>
     </label>`).join('');
   const bg = openModal(`
     <button class="close-x">✕</button>
     <h3>একাধিক মাসের চাঁদা এন্ট্রি</h3>
     <div class="field">
-      <label class="bulk-month-option"><input id="selectAllBulkMonths" type="checkbox"><span>সব বকেয়া মাস নির্বাচন করুন</span></label>
+      <label class="bulk-month-option"><input id="selectAllBulkMonths" type="checkbox" ${selectedKey && availableMonths.length===1?'checked':''}><span>সব বকেয়া মাস নির্বাচন করুন</span></label>
       <div class="bulk-month-list">${options}</div>
     </div>
     <div class="field"><label>জমার তারিখ</label><input id="bulkDate" type="date" value="${todayISO()}"></div>
