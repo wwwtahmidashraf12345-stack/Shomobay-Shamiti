@@ -52,7 +52,7 @@ npm run dev
 
 | রুট | কাজ |
 |---|---|
-| `GET/PUT /api/org` | সমিতির তথ্য ও হার |
+| `GET/PUT /api/org` | সমিতির তথ্য ও হার; এডমিনের `notices` তালিকা যোগ/পরিবর্তন |
 | `GET/POST/PUT/DELETE /api/guardians` | জিম্মাদার |
 | `GET/POST/PUT/DELETE /api/members`, `POST /api/members/bulk` | সদস্য |
 | `GET/PUT/DELETE /api/members/:id/entries/:key` | মাসিক/এককালীন জমার এন্ট্রি |
@@ -60,6 +60,8 @@ npm run dev
 | `GET/POST/DELETE /api/levies` | বিশেষ এককালীন চাঁদা |
 | `GET /api/summary` | মোট জমা, ব্যালেন্স ইত্যাদি সারসংক্ষেপ |
 | `POST /api/auth/setup`, `/login`, `/change-password`, `GET /verify`, `/status` | এডিট লগইন |
+
+এডিট মোডে **সমিতির তথ্য** পৃষ্ঠা থেকে একাধিক চলমান নোটিশ যোগ বা মুছুন। নোটিশগুলো মোবাইল মেনুবারে ডান দিক থেকে বাম দিকে প্রদর্শিত হয়।
 
 ## হোস্টিং (লাইভ করা)
 যেকোনো Node.js হোস্টিং-এ (Render, Railway, Vercel-এর Node adapter, নিজের VPS ইত্যাদি) ডিপ্লয়

@@ -20,6 +20,12 @@ router.put('/', requireAdmin, async (req, res) => {
   const fields = ['name', 'tagline', 'established', 'address', 'contact', 'contactPhone',
     'heroImageUrl', 'ratePerShare', 'onetimeRatePerShare'];
   fields.forEach(f => { if (req.body[f] !== undefined) org[f] = req.body[f]; });
+  if (req.body.notices !== undefined) {
+    if (!Array.isArray(req.body.notices) || req.body.notices.some(notice => typeof notice !== 'string')) {
+      return res.status(400).json({ error: 'নোটিশের তালিকা সঠিক নয়' });
+    }
+    org.notices = req.body.notices.map(notice => notice.trim()).filter(Boolean);
+  }
   await org.save();
   res.json(safe(org));
 });

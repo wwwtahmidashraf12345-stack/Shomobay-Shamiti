@@ -52,13 +52,45 @@
     display:flex;align-items:stretch;box-shadow:0 2px 8px rgba(0,0,0,.06);}
   .nav-links{display:flex;flex:1;overflow-x:auto;gap:2px;justify-content:center;}
   @media(max-width:600px){.nav-links{justify-content:flex-start;}}
+  .mobile-nav-toggle,.notice-ticker{display:none;}
   nav button{background:none;border:none;padding:12px 8px;font-size:13.5px;color:var(--ink-soft);
     border-bottom:3px solid transparent;white-space:nowrap;font-weight:600;flex-shrink:0;}
   nav button.active{color:var(--green);border-bottom-color:var(--red);}
   .lock-btn{flex-shrink:0;width:42px;display:flex;align-items:center;justify-content:center;
     background:none;border:none;border-left:1px solid var(--line);}
   .lock-btn svg{width:18px;height:18px;}
-
+  @media(max-width:600px){
+    nav{display:grid;grid-template-columns:44px minmax(0,1fr) 42px;align-items:center;position:sticky;}
+    .mobile-nav-toggle{display:flex;grid-column:1;grid-row:1;width:44px;height:44px;align-items:center;justify-content:center;
+      padding:0;border:0;background:none;color:var(--green);}
+    .mobile-nav-toggle svg{width:23px;height:23px;}
+    .notice-ticker{display:block;grid-column:2;grid-row:1;overflow:hidden;white-space:nowrap;color:var(--red);
+      font-size:12px;font-weight:600;line-height:44px;}
+    .ticker-track{display:flex;width:max-content;animation:notice-scroll 30s linear infinite;}
+    .ticker-copy{padding-right:36px;}
+    @keyframes notice-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+    .mobile-nav-toggle,.lock-btn{grid-row:1;}
+    .lock-btn{grid-column:3;}
+    .nav-links{position:absolute;top:100%;left:0;right:auto;width:max-content;max-width:calc(100vw - 56px);
+      display:flex;grid-column:auto;grid-row:auto;
+      flex-direction:column;justify-content:flex-start;overflow:visible;gap:6px;padding:10px 12px;
+      background:rgba(251,246,233,.5);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+      border:1px solid rgba(216,204,170,.8);border-top:0;border-radius:0 0 12px 12px;
+      box-shadow:0 10px 26px rgba(22,51,43,.2);opacity:0;visibility:hidden;pointer-events:none;
+      transform:translateY(-8px);filter:blur(8px);
+      transition:opacity .28s ease-in-out,transform .28s ease-in-out,filter .28s ease-in-out,visibility 0s linear .28s;}
+    .nav-links.open{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0);filter:blur(0);
+      transition:opacity .28s ease-in-out,transform .28s ease-in-out,filter .28s ease-in-out,visibility 0s;}
+    nav .nav-links button{text-align:left;padding:10px 12px;background:rgba(255,255,255,.5);
+      border:1px solid rgba(216,204,170,.72);border-left:3px solid transparent;border-radius:8px;
+      box-shadow:0 2px 7px rgba(22,51,43,.12);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+      transition:background .22s ease-in-out,box-shadow .22s ease-in-out,border-color .22s ease-in-out,
+        color .22s ease-in-out,transform .22s ease-in-out;}
+    nav .nav-links button:hover,nav .nav-links button:focus-visible{
+      background:rgba(201,162,75,.35);border-color:var(--brass);color:var(--green);
+      box-shadow:0 5px 16px rgba(22,51,43,.2);transform:translateX(4px);outline:none;}
+    nav .nav-links button.active{border-left-color:var(--red);}
+  }
   main{max-width:760px;margin:0 auto;padding:20px 16px 60px;
     background-image:repeating-linear-gradient(180deg, transparent, transparent 34px, rgba(91,81,64,.06) 35px);
   }
@@ -364,8 +396,15 @@ async function render(){
   const root = document.getElementById('root');
   const {page, id} = route();
 
+  const notices = (DATA.org && Array.isArray(DATA.org.notices) ? DATA.org.notices : []).filter(Boolean);
+  const tickerText = notices.length ? notices.join('  •  ') : 'এখন কোনো নোটিশ নেই';
+  const tickerCopy = `<span class="ticker-copy">${esc(tickerText)}　 •　 </span>`;
   let navHtml = `
   <nav>
+    <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="মেনু খুলুন" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <div class="notice-ticker" aria-label="চলমান নোটিশ"><div class="ticker-track">${tickerCopy}${tickerCopy}</div></div>
     <div class="nav-links">
       <button data-nav="home" class="${page==='home'?'active':''}">হোম</button>
       <button data-nav="summary" class="${page==='summary'?'active':''}">সমিতির সারাংশ</button>
@@ -413,8 +452,20 @@ function heroHtml(){
 }
 
 function attachNav(){
+  const menuToggle = document.getElementById('mobileNavToggle');
+  menuToggle.onclick = ()=>{
+    const links = document.querySelector('.nav-links');
+    const expanded = links.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', String(expanded));
+    menuToggle.setAttribute('aria-label', expanded?'মেনু বন্ধ করুন':'মেনু খুলুন');
+  };
   document.querySelectorAll('[data-nav]').forEach(b=>{
-    b.onclick = ()=>nav(b.getAttribute('data-nav'));
+    b.onclick = ()=>{
+      document.querySelector('.nav-links').classList.remove('open');
+      menuToggle.setAttribute('aria-expanded','false');
+      menuToggle.setAttribute('aria-label','মেনু খুলুন');
+      nav(b.getAttribute('data-nav'));
+    };
   });
   document.getElementById('lockToggle').onclick = ()=> unlocked ? lockNow() : openAdminAuth();
 }
@@ -795,6 +846,17 @@ function viewAbout(){
   <div class="field"><label>প্রতি শেয়ারে জুলাই/ডিসেম্বর এককালীন হার (টাকা)</label><input id="f_otrate" type="number" inputmode="numeric" value="${Number(o.onetimeRatePerShare||0)}" placeholder="যেমন: ২০০০"></div>
   <button class="btn brass block" id="saveAboutBtn">তথ্য সংরক্ষণ করুন</button>
   <button class="btn ghost block" id="changePwBtn" style="margin-top:10px">এডিট পাসওয়ার্ড পরিবর্তন করুন</button>
+  <h2 class="section-title" style="font-size:16px;margin-top:26px">চলমান নোটিশ</h2>
+  <div class="field hint" style="margin:-8px 0 12px;">এখানে যোগ করা নোটিশগুলো মোবাইল মেনুবারে ডান দিক থেকে বাম দিকে চলবে।</div>
+  <div class="toolbar">
+    <input class="search" id="noticeInput" placeholder="নতুন নোটিশ লিখুন">
+    <button class="btn brass sm" id="addNoticeBtn">${ICN.plus} যোগ করুন</button>
+  </div>
+  ${o.notices && o.notices.length ? o.notices.map((notice,index)=>`
+    <div class="entry-row">
+      <div class="edesc">${esc(notice)}</div>
+      <button class="edel" data-del-notice="${index}" aria-label="নোটিশ মুছুন">✕</button>
+    </div>`).join('') : emptyState('alert','এখনো কোনো নোটিশ যোগ করা হয়নি')}
   <h2 class="section-title" style="font-size:16px;margin-top:26px">বিশেষ এককালীন চাঁদা</h2>
   <div class="field hint" style="margin:-8px 0 12px;">এখানে যোগ করা প্রতিটি চাঁদা "প্রতি শেয়ারে" হারে সব সদস্যের "বকেয়া"-তে (শেয়ার সংখ্যা × এই হার) যোগ হয়ে যাবে।</div>
   <div class="toolbar"><button class="btn brass sm" id="addLevyBtn">${ICN.plus} নতুন এককালীন চাঁদা যোগ করুন</button></div>
@@ -963,6 +1025,10 @@ function attachPageEvents(page, id){
   if(page==='about'){
     const sb=document.getElementById('saveAboutBtn'); if(sb) sb.onclick = saveAbout;
     const cp=document.getElementById('changePwBtn'); if(cp) cp.onclick = openChangePassword;
+    const anb=document.getElementById('addNoticeBtn'); if(anb) anb.onclick = addNotice;
+    document.querySelectorAll('[data-del-notice]').forEach(btn=>{
+      btn.onclick = ()=>deleteNotice(Number(btn.getAttribute('data-del-notice')));
+    });
     const alb=document.getElementById('addLevyBtn'); if(alb) alb.onclick = openAddLevy;
     document.querySelectorAll('[data-del-levy]').forEach(btn=>{
       btn.onclick = ()=>deleteLevy(btn.getAttribute('data-del-levy'));
@@ -1342,6 +1408,30 @@ async function deleteLevy(id){
   if(!data) return;
   DATA.specialLevies = DATA.specialLevies.filter(x=>x.id!==id);
   toast('মুছে ফেলা হয়েছে');
+  render();
+}
+
+async function addNotice(){
+  if(!requireUnlocked()) return;
+  const input = document.getElementById('noticeInput');
+  const notice = input.value.trim();
+  if(!notice){ toast('নোটিশ লিখুন', true); return; }
+  const data = await apiMutate('PUT','/org', {notices:[...(DATA.org.notices||[]), notice]});
+  if(!data) return;
+  DATA.org = data;
+  toast('নোটিশ যোগ হয়েছে');
+  render();
+}
+
+async function deleteNotice(index){
+  if(!requireUnlocked()) return;
+  if(!confirm('এই নোটিশটি মুছে ফেলতে চান?')) return;
+  const notices = DATA.org.notices || [];
+  if(index < 0 || index >= notices.length) return;
+  const data = await apiMutate('PUT','/org', {notices:notices.filter((_,i)=>i!==index)});
+  if(!data) return;
+  DATA.org = data;
+  toast('নোটিশ মুছে ফেলা হয়েছে');
   render();
 }
 

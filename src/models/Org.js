@@ -10,6 +10,7 @@ const orgSchema = new mongoose.Schema({
   heroImageUrl: { type: String, default: '' },
   ratePerShare: { type: Number, default: 0 },
   onetimeRatePerShare: { type: Number, default: 2000 },
+  notices: { type: [String], default: [] },
   adminPasswordHash: { type: String, default: '' },
 }, { timestamps: true });
 
