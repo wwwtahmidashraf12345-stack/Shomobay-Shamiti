@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const memberSchema = new mongoose.Schema({
   name: { type: String, default: '' },
+  photoUrl: { type: String, default: '' },
   guardianId: { type: mongoose.Schema.Types.ObjectId, ref: 'Guardian', default: null },
   phone: { type: String, default: '' },
   address: { type: String, default: '' },

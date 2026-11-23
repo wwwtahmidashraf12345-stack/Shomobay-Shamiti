@@ -129,6 +129,7 @@
     border-radius:10px;padding:12px 14px;margin-bottom:8px;}
   .list-item .avatar{width:38px;height:38px;border-radius:50%;background:var(--green);color:var(--brass);
     display:flex;align-items:center;justify-content:center;font-family:'Tiro Bangla',serif;font-size:15px;flex-shrink:0;}
+  .list-item .avatar img,.m-photo img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
   .list-item .meta{flex:1;min-width:0;}
   .list-item .name{font-weight:700;font-size:15px;}
   .list-item .name.placeholder{color:var(--ink-soft);font-style:italic;font-weight:600;}
@@ -140,6 +141,12 @@
   /* ---------- MEMBER HEADER ---------- */
   .m-head{background:var(--green);color:#F1E9D2;border-radius:12px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden;}
   .m-head::after{content:"";position:absolute;inset:0;border:1px solid rgba(201,162,75,.3);border-radius:12px;pointer-events:none;margin:5px;}
+  .m-photo{width:74px;height:74px;border-radius:50%;border:3px solid var(--brass);background:rgba(201,162,75,.15);
+    display:flex;align-items:center;justify-content:center;color:var(--brass);font-family:'Tiro Bangla',serif;
+    font-size:28px;margin:0 auto 10px;position:relative;z-index:1;}
+  .photo-edit-preview{width:72px;height:72px;border-radius:50%;margin:0 auto 8px;overflow:hidden;background:var(--green);
+    display:flex;align-items:center;justify-content:center;color:var(--brass);font-size:26px;}
+  .photo-edit-preview img{width:100%;height:100%;object-fit:cover;}
   .m-head .name{font-family:'Tiro Bangla',serif;font-size:23px;color:#F6EFD8;}
   .tag-pill{display:inline-block;font-size:10.5px;background:rgba(201,162,75,.18);color:var(--brass);
     padding:2px 10px;border-radius:20px;margin-top:8px;font-weight:700;letter-spacing:.3px;}
@@ -248,6 +255,22 @@ async function apiMutate(method, path, body){
   if(!r.ok){ toast('⚠️ '+r.error, true); return null; }
   return r.data;
 }
+async function apiUpload(path, file){
+  try{
+    const form = new FormData();
+    form.append('photo', file);
+    const headers = {};
+    if(authToken) headers['Authorization'] = 'Bearer '+authToken;
+    const res = await fetch(API_BASE+path, {method:'POST', headers, body:form});
+    let data = null;
+    try{ data = await res.json(); }catch(e){ data = null; }
+    if(!res.ok){ toast('⚠️ '+((data&&data.error)||('ত্রুটি (কোড '+res.status+')')), true); return null; }
+    return data;
+  }catch(e){
+    toast('⚠️ ছবিটি আপলোড করা যাচ্ছে না', true);
+    return null;
+  }
+}
 function withId(x){ return x ? {...x, id:x._id} : x; }
 
 let DATA = { org:null, guardians:[], members:[], income:[], expense:[], specialLevies:[], summary:{savingsTotal:0,balance:0}, setupDone:false };
@@ -298,6 +321,15 @@ function todayISO(){
 }
 function esc(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function initials(name){ return (name||'?').trim().charAt(0) || '?'; }
+function safePhotoUrl(url){
+  const value = String(url||'').trim();
+  if(value.startsWith('/uploads/members/') || /^https?:\/\//i.test(value)) return value;
+  return '';
+}
+function memberAvatar(member, sizeClass=''){
+  const photo = safePhotoUrl(member.photoUrl);
+  return `<div class="avatar ${sizeClass}">${photo?`<img src="${esc(photo)}" alt="${esc(member.name||'সদস্য')}" loading="lazy">`:esc(initials(member.name))}</div>`;
+}
 function toast(msg, isErr){
   const t=document.createElement('div'); t.className='toast'+(isErr?' err':''); t.textContent=msg;
   document.body.appendChild(t); setTimeout(()=>t.remove(),isErr?3600:2200);
@@ -567,7 +599,7 @@ async function viewGuardianDetail(gid){
   const dueCount = finances.filter(fin=>fin.due>0).length;
   const items = members.map(m=>`
     <a class="list-item" data-nav="member/${m.id}">
-      <div class="avatar">${esc(initials(m.name))}</div>
+      ${memberAvatar(m)}
       <div class="meta">
         <div class="name ${m.name?'':'placeholder'}">সদস্য নং ${toBn(m.memberNo)} — ${m.name?esc(m.name):'নাম যোগ করুন'}</div>
         <div class="sub">${m.phone?esc(m.phone):'হিসাব দেখতে চাপুন'}</div>
@@ -597,7 +629,7 @@ function viewMembers(){
       const g = DATA.guardians.find(x=>x.id===m.guardianId);
       return `
       <a class="list-item member-row" data-nav="member/${m.id}" data-search="${esc(m.name)} ${toBn(m.memberNo)}">
-        <div class="avatar">${esc(initials(m.name))}</div>
+        ${memberAvatar(m)}
         <div class="meta">
           <div class="name ${m.name?'':'placeholder'}">সদস্য নং ${toBn(m.memberNo)} — ${m.name?esc(m.name):'নাম যোগ করুন'}</div>
           <div class="sub">জিম্মাদার: ${g?esc(g.name):'নির্ধারিত নয়'}</div>
@@ -630,6 +662,7 @@ async function viewMemberDetail(mid){
   return `
   <button class="btn ghost sm" data-nav="members" style="margin-bottom:14px">‹ সকল সদস্যে ফিরুন</button>
   <div class="m-head">
+    ${(() => { const photo=safePhotoUrl(m.photoUrl); return `<div class="m-photo">${photo?`<img src="${esc(photo)}" alt="${esc(m.name||'সদস্য')}">`:esc(initials(m.name))}</div>`; })()}
     <div class="name">সদস্য নং ${toBn(m.memberNo)} — ${m.name?esc(m.name):'নাম যোগ করুন'}</div>
     <div class="tag-pill">সাধারণ সদস্য</div>
     <div class="row">
@@ -785,7 +818,7 @@ function duesRowHtml(r){
   const tags = shown.map(l=>`<span class="tag-pill" style="background:rgba(139,46,46,.12);color:var(--red);margin:2px 4px 2px 0;">${esc(l)}</span>`).join('')
     + (extra>0 ? `<span class="tag-pill" style="opacity:.6">+${toBn(extra)}</span>` : '');
   return `<a class="list-item" data-nav="member/${r.member.id}" style="align-items:flex-start;">
-    <div class="avatar">${esc(initials(r.member.name))}</div>
+  ${memberAvatar(r.member)}
     <div class="meta">
       <div class="name ${r.member.name?'':'placeholder'}">সদস্য নং ${toBn(r.member.memberNo)} — ${r.member.name?esc(r.member.name):'নাম যোগ করুন'}</div>
       <div class="sub" style="margin-top:5px;line-height:1.9;">${tags}</div>
@@ -1107,6 +1140,10 @@ function openAddMember(gid){
     <button class="close-x">✕</button>
     <h3>নতুন সদস্য যোগ করুন</h3>
     <div class="field"><label>নাম</label><input id="mName" placeholder="সদস্যের পূর্ণ নাম"></div>
+    <div class="field"><label>প্রোফাইল ছবির লিংক (ঐচ্ছিক)</label>
+      <input id="mPhotoUrl" type="url" placeholder="https://example.com/photo.jpg">
+      <div class="hint">আপনি চাইলে পরে সম্পাদনা থেকে ছবি আপলোড করতে পারবেন</div>
+    </div>
     <div class="field"><label>জিম্মাদার</label>
       <select id="mGuardian"><option value="">নির্বাচন করুন (ঐচ্ছিক)</option>${guardianOptionsHtml(gid)}</select>
     </div>
@@ -1127,6 +1164,7 @@ function openAddMember(gid){
       phone: bg.querySelector('#mPhone').value.trim(),
       address: bg.querySelector('#mAddress').value.trim(),
       shares: Number(bg.querySelector('#mShares').value)||0,
+      photoUrl: safePhotoUrl(bg.querySelector('#mPhotoUrl').value),
     });
     if(!data) return;
     DATA.members.push(withId(data));
@@ -1167,10 +1205,20 @@ function openBulkAdd(gid){
 function openEditMember(mid){
   if(!requireUnlocked()) return;
   const m = DATA.members.find(x=>x.id===mid);
+  const existingPhoto = safePhotoUrl(m.photoUrl);
   const bg = openModal(`
     <button class="close-x">✕</button>
     <h3>সদস্যের তথ্য পরিবর্তন</h3>
+    <div class="photo-edit-preview">${existingPhoto?`<img src="${esc(existingPhoto)}" alt="${esc(m.name||'সদস্য')}">`:esc(initials(m.name))}</div>
     <div class="field"><label>নাম</label><input id="mName" value="${esc(m.name)}"></div>
+    <div class="field"><label>প্রোফাইল ছবির লিংক</label>
+      <input id="mPhotoUrl" type="url" value="${esc(existingPhoto&&existingPhoto.startsWith('/uploads/')?'':existingPhoto)}" placeholder="https://example.com/photo.jpg">
+    </div>
+    ${existingPhoto?`<div class="field"><label class="bulk-month-option"><input id="mRemovePhoto" type="checkbox"><span>বর্তমান ছবি সরান</span></label></div>`:''}
+    <div class="field"><label>কম্পিউটার থেকে ছবি আপলোড</label>
+      <input id="mPhotoFile" type="file" accept="image/jpeg,image/png,image/gif,image/webp">
+      <div class="hint">সর্বোচ্চ ৫ MB; আপলোড করলে লিংকটি অগ্রাহ্য হবে</div>
+    </div>
     <div class="field"><label>জিম্মাদার</label><select id="mGuardian"><option value="">নির্ধারিত নয়</option>${guardianOptionsHtml(m.guardianId)}</select></div>
     <div class="field"><label>ফোন নম্বর</label><input id="mPhone" value="${esc(m.phone||'')}"></div>
     <div class="field"><label>ঠিকানা</label><input id="mAddress" value="${esc(m.address||'')}"></div>
@@ -1181,15 +1229,25 @@ function openEditMember(mid){
     </div>`);
   bg.querySelector('.close-x').onclick = ()=>closeModal(bg);
   bg.querySelector('#saveBtn').onclick = async ()=>{
+    const removePhoto = bg.querySelector('#mRemovePhoto')?.checked;
+    let photoUrl = removePhoto ? '' : safePhotoUrl(bg.querySelector('#mPhotoUrl').value);
+    if(!removePhoto && !photoUrl && existingPhoto.startsWith('/uploads/')) photoUrl = existingPhoto;
     const data = await apiMutate('PUT','/members/'+mid, {
       name: bg.querySelector('#mName').value.trim(),
       guardianId: bg.querySelector('#mGuardian').value||null,
       phone: bg.querySelector('#mPhone').value.trim(),
       address: bg.querySelector('#mAddress').value.trim(),
       shares: Number(bg.querySelector('#mShares').value)||0,
+      photoUrl,
     });
     if(!data) return;
     Object.assign(m, withId(data));
+    const photoFile = bg.querySelector('#mPhotoFile').files[0];
+    if(photoFile){
+      const uploaded = await apiUpload('/members/'+mid+'/photo', photoFile);
+      if(!uploaded) return;
+      Object.assign(m, withId(uploaded));
+    }
     closeModal(bg); toast('তথ্য হালনাগাদ হয়েছে'); render();
   };
   bg.querySelector('#delBtn').onclick = async ()=>{
