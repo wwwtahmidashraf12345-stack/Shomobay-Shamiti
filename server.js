@@ -24,11 +24,15 @@ app.get('*', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-connectDB()
-  .then(() => {
-    app.listen(PORT, () => console.log(`🚀 সার্ভার চলছে: http://localhost:${PORT}`));
-  })
-  .catch(err => {
-    console.error('❌ MongoDB সংযোগ ব্যর্থ:', err.message);
-    process.exit(1);
-  });
+if (require.main === module) {
+  connectDB()
+    .then(() => {
+      app.listen(PORT, () => console.log(`🚀 সার্ভার চলছে: http://localhost:${PORT}`));
+    })
+    .catch(err => {
+      console.error('❌ MongoDB সংযোগ ব্যর্থ:', err.message);
+      process.exit(1);
+    });
+}
+
+module.exports = app;
