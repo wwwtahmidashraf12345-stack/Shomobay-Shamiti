@@ -323,7 +323,7 @@ function esc(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;',
 function initials(name){ return (name||'?').trim().charAt(0) || '?'; }
 function safePhotoUrl(url){
   const value = String(url||'').trim();
-  if(value.startsWith('/uploads/members/') || /^https?:\/\//i.test(value)) return value;
+  if(value.startsWith('/uploads/members/') || /^https?:\/\//i.test(value) || /^data:image\/(jpeg|png|gif|webp);base64,/i.test(value)) return value;
   return '';
 }
 function memberAvatar(member, sizeClass=''){
