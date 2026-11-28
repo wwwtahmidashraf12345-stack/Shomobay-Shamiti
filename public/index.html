@@ -330,6 +330,13 @@ function memberAvatar(member, sizeClass=''){
   const photo = safePhotoUrl(member.photoUrl);
   return `<div class="avatar ${sizeClass}">${photo?`<img src="${esc(photo)}" alt="${esc(member.name||'সদস্য')}" loading="lazy">`:esc(initials(member.name))}</div>`;
 }
+function guardianAvatar(guardian, sizeClass=''){
+  const guardianPhoto = safePhotoUrl(guardian.photoUrl);
+  const memberPhoto = DATA.members
+    .find(m=>m.guardianId===guardian.id && safePhotoUrl(m.photoUrl));
+  const photo = guardianPhoto || safePhotoUrl(memberPhoto?.photoUrl);
+  return `<div class="avatar ${sizeClass}">${photo?`<img src="${esc(photo)}" alt="${esc(guardian.name||'জিম্মাদার')}" loading="lazy">`:esc(initials(guardian.name))}</div>`;
+}
 function toast(msg, isErr){
   const t=document.createElement('div'); t.className='toast'+(isErr?' err':''); t.textContent=msg;
   document.body.appendChild(t); setTimeout(()=>t.remove(),isErr?3600:2200);
@@ -571,7 +578,7 @@ function guardianMemberCount(gid){
 function viewGuardians(){
   const items = DATA.guardians.map(g=>`
     <a class="list-item" data-nav="guardian/${g.id}">
-      <div class="avatar">${esc(initials(g.name))}</div>
+      ${guardianAvatar(g)}
       <div class="meta">
         <div class="name">${esc(g.name)}</div>
         <div class="sub">${toBn(guardianMemberCount(g.id))} জন সদস্যের দায়িত্বে${g.phone? ' · '+esc(g.phone):''}</div>
@@ -607,6 +614,7 @@ async function viewGuardianDetail(gid){
       <div class="arrow">›</div>
     </a>`).join('');
   return `
+  <div style="text-align:center;margin-bottom:8px">${guardianAvatar(g,'m-photo')}</div>
   <h2 class="section-title">${esc(g.name)}</h2>
   ${unlocked?`<div class="toolbar">
     <button class="btn ghost sm" id="editGuardianBtn">নাম/ফোন পরিবর্তন</button>
