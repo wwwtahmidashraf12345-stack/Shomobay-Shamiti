@@ -82,6 +82,11 @@
     background:rgba(201,162,75,.35);border-color:var(--brass);color:var(--green);
     box-shadow:0 5px 16px rgba(22,51,43,.2);transform:translateX(4px);outline:none;}
   nav .nav-links button.active{border-left-color:var(--red);}
+  .language-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px;
+    padding:8px 12px;border-top:1px solid rgba(216,204,170,.72);}
+  .language-switch button{min-width:72px;text-align:center!important;padding:7px 8px!important;
+    border:1px solid var(--line)!important;border-radius:7px!important;transform:none!important;}
+  .language-switch button.active{background:var(--green)!important;color:#F1E9D2!important;border-left:1px solid var(--green)!important;}
   main{max-width:760px;margin:0 auto;padding:20px 16px 60px;
     background-image:repeating-linear-gradient(180deg, transparent, transparent 34px, rgba(91,81,64,.06) 35px);
   }
@@ -235,6 +240,7 @@ const API_BASE = '/api';
 let authToken = localStorage.getItem('samity_admin_token') || null;
 let unlocked = false;
 let backendDown = false;
+let currentLang = localStorage.getItem('samity_language') === 'en' ? 'en' : 'bn';
 
 async function apiCall(method, path, body){
   try{
@@ -307,13 +313,75 @@ async function loadMonths(memberId){
 /* ================= UTIL ================= */
 const bnD=['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
 const BN_MONTHS=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+const EN_MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const YEAR_COLOR={2024:'#C9A24B',2025:'#1F4738',2026:'#8B2E2E',2027:'#4B6478',2028:'#6B7A3A',2029:'#6B3F5C',2030:'#2E6B66'};
-function toBn(n){ return String(n).replace(/[0-9]/g, d=>bnD[d]); }
+function toBn(n){ const s=String(n); return currentLang==='bn'?s.replace(/[0-9]/g,d=>bnD[d]):s; }
 function taka(n){ n=Number(n)||0; return '৳'+toBn(n.toLocaleString('en-IN')); }
 function bnDate(iso){
   if(!iso) return '';
   const [y,m,d]=iso.split('-');
+  if(currentLang==='en') return `${parseInt(d)} ${(EN_MONTHS[parseInt(m)-1])}, ${parseInt(y)}`;
   return `${toBn(parseInt(d))} ${BN_MONTHS[parseInt(m)-1]}, ${toBn(y)}`;
+}
+const UI_TRANSLATIONS = {
+  'হোম':'Home','সমিতির সারাংশ':'Association Summary','জিম্মাদারগণ':'Guardians','সকল সদস্য':'All Members','আয়-ব্যয়':'Income & Expense','তথ্য':'Information',
+  'জিম্মাদার':'Guardians','সদস্য':'Members','মোট জমা হয়েছে':'Total Deposits','মোট জমা হয়েছে / Total Deposits':'Total Deposits',
+  'সদস্যদের মোট জমা':'Total Member Deposits','মোট জমা হওয়ার কথা':'Expected Deposits','মোট বকেয়া':'Total Due',
+  'সম্পূর্ণ পরিশোধ করেছেন':'Fully Paid','বকেয়া আছে':'Due Outstanding','মোট ব্যয়':'Total Expense','অন্যান্য আয়':'Other Income','বর্তমান ব্যালেন্স':'Current Balance',
+  'জিম্মাদারগণ':'Guardians','সমিতির সম্পূর্ণ হিসাব দেখুন':'View the complete association accounts',
+  'জন সাধারণ সদস্য':'general members','বিবরণী':'Details','বকেয়া':'Due','যাদের বাকি আছে':'Members with dues',
+  'জিম্মাদারের অধীনে':'Under guardian','নির্ধারিত নয়':'Not assigned','তথ্য পরিবর্তন':'Edit Information','সদস্য মুছুন':'Delete Member','সদস্য মুছুন / Delete Member':'Delete Member',
+  'সর্বমোট জমা':'Total Deposits','সর্বমোট জমা / Total Deposits':'Total Deposits','ঠিকানা':'Address','শেয়ার সংখ্যা':'Number of Shares',
+  'মাসভিত্তিক জমার হিসাব':'Monthly Deposit Accounts','বিশেষ এককালীন চাঁদা':'Special One-time Levies','জমা হয়নি':'Not Paid','বকেয়া — যোগ করতে চাপুন':'Due — Add Entry',
+  'চেকবক্সে মাস বাছাই করে চাঁদা এন্ট্রি':'Select months by checkbox and add deposits','জমা হয়নি — যোগ করতে চাপুন':'Not paid — Add Entry',
+  'একসাথে অনেকজন যোগ করুন':'Add Many Members','সদস্য যোগ করুন':'Add Member','জিম্মাদার যোগ করুন':'Add Guardian','নাম/ফোন পরিবর্তন':'Edit Name/Phone',
+  'মোট শেয়ার সংখ্যা':'Total Shares','সদস্য সংখ্যা':'Member Count','জিম্মাদার সংখ্যা':'Guardian Count','সদস্য চাঁদার হার':'Member Contribution Rate',
+  'শুধু দেখার মোড — পরিবর্তন করতে উপরে ডান পাশের লক আইকনে চাপুন':'View-only mode — tap the lock at the top right to edit',
+  'এডিট মোড চালু আছে — লক করতে চাপুন':'Edit mode is active — tap to lock','শুধু দেখা যাচ্ছে — এডিট করতে চাপুন':'View only — tap to edit',
+  'মেনু খুলুন':'Open menu','মেনু বন্ধ করুন':'Close menu','চলমান নোটিশ':'Running Notices','এখন কোনো নোটিশ নেই':'No notices',
+  'লোড হচ্ছে...':'Loading...','সমিতির খাতা খোলা হচ্ছে...':'Opening association ledger...',
+  'সদস্যের তথ্য পরিবর্তন':'Edit Member Information','কম্পিউটার থেকে ছবি আপলোড':'Upload photo from computer','প্রোফাইল ছবির লিংক':'Profile photo link',
+  'জিম্মাদার':'Guardian','ফোন নম্বর':'Phone Number','সংরক্ষণ':'Save','বাতিল':'Cancel','যোগ করুন':'Add','মুছে ফেলুন':'Delete',
+  'আয়':'Income','ব্যয়':'Expense','অতিরিক্ত আয় যোগ করুন':'Add Other Income','ব্যয় যোগ করুন':'Add Expense','বই/রশিদ নং':'Book/Receipt No.',
+  'সমিতির তথ্য':'Association Information','চলমান নোটিশ':'Running Notices','নতুন নোটিশ লিখুন':'Write a new notice',
+  'এডিট পাসওয়ার্ড পরিবর্তন করুন':'Change Edit Password','তথ্য সংরক্ষণ করুন':'Save Information','নাম':'Name','সুপরিচিতি':'Description',
+  'সদস্যদের তালিকা':'Member List','জিম্মাদার ভিত্তিক বকেয়া':'Guardian-wise Due','সদস্য মুছে ফেলা হয়েছে':'Member deleted','সফলভাবে সংরক্ষণ হয়েছে':'Saved successfully'
+  ,'বই/রশিদ নং':'Book/Receipt No.','সাধারণ সদস্য':'General Member','সদস্য নং':'Member No','জমি কিনা বাবদ':'Land Purchase',
+  'বছর':'Year','তिथि':'Date','পরিমাণ':'Amount','ফোন':'Phone','সারাংশ':'Summary','নোটিশ':'Notice','এককালীন':'One-time',
+  'নাম বা সদস্য নং দিয়ে খুঁজুন...':'Search by name or member no...','সদস্য যোগ করুন':'Add Member','সদস্য':'Member',
+  'অনুপস্থিত':'Not available','অধীনস্থদের মোট বকেয়া':'Total Due of Members','বকেয়া সদস্য':'Members with Due'
+};
+function translateText(text){
+  if(currentLang==='en' && text){
+    let out=UI_TRANSLATIONS[text] || text;
+    out=out.replace(/সদস্য নং/g,'Member No');
+    out=out.replace(/জিম্মাদার:\s*/g,'Guardian: ');
+    out=out.replace(/ফোন:\s*/g,'Phone: ');
+    out=out.replace(/জন/g,'people');
+    return out;
+  }
+  return text;
+}
+function applyLanguage(root=document){
+  document.documentElement.lang=currentLang;
+  document.documentElement.dir='ltr';
+  document.title=currentLang==='en'?'Dream Savings Cooperative Association':'স্বপ্ন সঞ্চয় সমবায় সমিতি';
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+  const nodes=[];
+  while(walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(node=>{
+    const trimmed=node.nodeValue.trim();
+    if(trimmed) node.nodeValue=node.nodeValue.replace(trimmed,translateText(trimmed));
+  });
+  document.querySelectorAll('[placeholder]').forEach(el=>{
+    const key=el.getAttribute('placeholder');
+    if(currentLang==='en' && UI_TRANSLATIONS[key]) el.setAttribute('placeholder',UI_TRANSLATIONS[key]);
+  });
+}
+function setLanguage(lang){
+  currentLang=lang==='en'?'en':'bn';
+  localStorage.setItem('samity_language',currentLang);
+  render();
 }
 function todayISO(){
   const now = new Date();
@@ -352,14 +420,14 @@ function monthsInRange(){
   const arr=[];
   [10,11,12].forEach(m=>{
     const mm=String(m).padStart(2,'0');
-    arr.push({y:2024,key:`2024-${mm}`,label:BN_MONTHS[m-1]});
+    arr.push({y:2024,key:`2024-${mm}`,label:(currentLang==='en'?EN_MONTHS[m-1]:BN_MONTHS[m-1])});
   });
   for(let y=2025;y<=2030;y++){
     for(let m=1;m<=12;m++){
       const mm=String(m).padStart(2,'0');
-      arr.push({y,key:`${y}-${mm}`,label:BN_MONTHS[m-1]});
-      if(m===7) arr.push({y,key:`${y}-OT1`,label:'এককালীন',onetime:true});
-      if(m===12) arr.push({y,key:`${y}-OT2`,label:'এককালীন',onetime:true});
+      arr.push({y,key:`${y}-${mm}`,label:(currentLang==='en'?EN_MONTHS[m-1]:BN_MONTHS[m-1])});
+      if(m===7) arr.push({y,key:`${y}-OT1`,label:(currentLang==='en'?'One-time':'এককালীন'),onetime:true});
+      if(m===12) arr.push({y,key:`${y}-OT2`,label:(currentLang==='en'?'One-time':'এককালীন'),onetime:true});
     }
   }
   return arr;
@@ -442,6 +510,10 @@ async function render(){
       <button data-nav="members" class="${page==='members'||page==='member'?'active':''}">সকল সদস্য</button>
       <button data-nav="income-expense" class="${page==='income-expense'?'active':''}">আয়-ব্যয়</button>
       <button data-nav="about" class="${page==='about'?'active':''}">তথ্য</button>
+      <div class="language-switch" aria-label="Language">
+        <button type="button" data-language="bn" class="${currentLang==='bn'?'active':''}">বাংলা</button>
+        <button type="button" data-language="en" class="${currentLang==='en'?'active':''}">English</button>
+      </div>
     </div>
     <button id="lockToggle" class="lock-btn" style="color:${unlocked?'var(--red)':'var(--ink-soft)'}" title="${unlocked?'এডিট মোড চালু আছে — লক করতে চাপুন':'শুধু দেখা যাচ্ছে — এডিট করতে চাপুন'}">${unlocked?ICN.unlock:ICN.lock}</button>
   </nav>`;
@@ -465,6 +537,7 @@ async function render(){
 
   document.querySelector('main').innerHTML = (unlocked?'':'<div class="view-only-note">শুধু দেখার মোড — পরিবর্তন করতে উপরে ডান পাশের লক আইকনে চাপুন</div>') + body;
   attachPageEvents(page, id);
+  applyLanguage(document.getElementById('root'));
 }
 
 function heroHtml(){
@@ -497,6 +570,11 @@ function attachNav(){
       nav(b.getAttribute('data-nav'));
     };
   });
+  document.querySelectorAll('[data-language]').forEach(button=>{
+    button.onclick = ()=>{
+      setLanguage(button.getAttribute('data-language'));
+    };
+  });
   document.getElementById('lockToggle').onclick = ()=> unlocked ? lockNow() : openAdminAuth();
 }
 
@@ -510,7 +588,7 @@ function viewHome(){
   <div class="stat-row">
     <div class="stat"><b>${toBn(totalGuardians)}</b><span>জিম্মাদার</span></div>
     <div class="stat"><b>${toBn(totalMembers)}</b><span>সদস্য</span></div>
-    <div class="stat"><b>${taka(savings)}</b><span>সদস্যদের মোট জমা</span></div>
+    <div class="stat"><b>${taka(savings)}</b><span>মোট জমা হয়েছে / Total Deposits</span></div>
   </div>
   <div class="grid" style="margin-top:20px">
     <a class="opt-card" data-nav="guardians">
@@ -552,7 +630,7 @@ function viewSummary(){
     ['সদস্য সংখ্যা', toBn(summary.memberCount || 0)],
     ['মোট শেয়ার সংখ্যা', toBn(summary.totalShares || 0)],
     ['মোট জমা হওয়ার কথা', taka(summary.totalExpected)],
-    ['সদস্যদের মোট জমা', taka(summary.savingsTotal)],
+    ['মোট জমা হয়েছে / Total Deposits', taka(summary.savingsTotal)],
     ['মোট বকেয়া', taka(summary.totalDue)],
     ['সম্পূর্ণ পরিশোধ করেছেন', `${toBn(summary.paidCount || 0)} জন`],
     ['বকেয়া আছে', `${toBn(summary.dueCount || 0)} জন`],
@@ -677,16 +755,17 @@ async function viewMemberDetail(mid){
       <span>জিম্মাদার: ${g?esc(g.name):'নির্ধারিত নয়'}</span>
       ${m.phone?`<span>ফোন: ${esc(m.phone)}</span>`:''}
     </div>
-    <div class="total">সর্বমোট জমা<b>${taka(fin.actual)}</b></div>
+    <div class="total">সর্বমোট জমা / Total Deposits<b>${taka(fin.actual)}</b></div>
   </div>
   ${unlocked?`<div class="toolbar">
     <button class="btn ghost sm" id="editMemberBtn" data-mid="${mid}">তথ্য পরিবর্তন</button>
+    <button class="btn danger sm" id="deleteMemberBtn" data-mid="${mid}">সদস্য মুছুন / Delete Member</button>
   </div>`:''}
   <div class="info-box">
     <div class="info-row"><div class="k">ঠিকানা</div><div class="v" style="font-family:inherit;font-weight:600;font-size:13.5px;text-align:right;">${m.address?esc(m.address):'—'}</div></div>
     <div class="info-row"><div class="k">শেয়ার সংখ্যা</div><div class="v">${toBn(m.shares||0)}</div></div>
     <div class="info-row"><div class="k">মোট জমা হওয়ার কথা</div><div class="v">${taka(fin.expected)}</div></div>
-    <div class="info-row paid"><div class="k">মোট জমা হয়েছে</div><div class="v">${taka(fin.actual)}</div></div>
+    <div class="info-row paid"><div class="k">মোট জমা হয়েছে / Total Deposits</div><div class="v">${taka(fin.actual)}</div></div>
     <div class="info-row due"><div class="k">বকেয়া</div><div class="v">${taka(fin.due)}</div></div>
   </div>
   ${Number(DATA.org.ratePerShare||0)===0?'<div class="rate-hint">প্রত্যাশিত জমা সঠিকভাবে দেখাতে "তথ্য" পেইজে প্রতি শেয়ারের মাসিক চাঁদার হার বসান</div>':''}
@@ -1032,6 +1111,7 @@ function attachPageEvents(page, id){
   if(page==='member'){
     const mid = id;
     const eb = document.getElementById('editMemberBtn'); if(eb) eb.onclick = ()=>openEditMember(mid);
+    const db = document.getElementById('deleteMemberBtn'); if(db) db.onclick = async ()=>{ if(await deleteMember(mid)) nav('members'); };
     const bulkEntryBtn = document.getElementById('bulkMonthEntryBtn');
     if(bulkEntryBtn) bulkEntryBtn.onclick = ()=>openBulkMonthEntry(mid);
     document.querySelectorAll('.ytab').forEach(t=>{
@@ -1210,6 +1290,18 @@ function openBulkAdd(gid){
   };
 }
 
+async function deleteMember(mid){
+  if(!requireUnlocked()) return false;
+  if(!confirm('এই সদস্যকে মুছে ফেলতে চান? তার সকল মাসিক জমার হিসাবও মুছে যাবে।')) return false;
+  const data = await apiMutate('DELETE','/members/'+mid);
+  if(!data) return false;
+  DATA.members = DATA.members.filter(x=>x.id!==mid);
+  delete monthsCache[mid];
+  await refreshSummary();
+  toast('সদস্য মুছে ফেলা হয়েছে');
+  return true;
+}
+
 function openEditMember(mid){
   if(!requireUnlocked()) return;
   const m = DATA.members.find(x=>x.id===mid);
@@ -1232,7 +1324,7 @@ function openEditMember(mid){
     <div class="field"><label>ঠিকানা</label><input id="mAddress" value="${esc(m.address||'')}"></div>
     <div class="field"><label>শেয়ার সংখ্যা</label><input id="mShares" type="number" inputmode="numeric" value="${m.shares||0}"></div>
     <div class="modal-actions">
-      <button class="btn danger" id="delBtn">সদস্য মুছুন</button>
+      <button class="btn danger" id="delBtn">সদস্য মুছুন / Delete Member</button>
       <button class="btn brass" id="saveBtn">সংরক্ষণ</button>
     </div>`);
   bg.querySelector('.close-x').onclick = ()=>closeModal(bg);
@@ -1259,13 +1351,9 @@ function openEditMember(mid){
     closeModal(bg); toast('তথ্য হালনাগাদ হয়েছে'); render();
   };
   bg.querySelector('#delBtn').onclick = async ()=>{
-    if(!confirm('এই সদস্যকে মুছে ফেলতে চান? তার সকল মাসিক জমার হিসাবও মুছে যাবে।')) return;
-    const data = await apiMutate('DELETE','/members/'+mid);
-    if(!data) return;
-    DATA.members = DATA.members.filter(x=>x.id!==mid);
-    delete monthsCache[mid];
-    await refreshSummary();
-    closeModal(bg); nav('members');
+    if(await deleteMember(mid)){
+      closeModal(bg); nav('members');
+    }
   };
 }
 
